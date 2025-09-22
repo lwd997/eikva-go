@@ -1,7 +1,6 @@
 package testcasegroupcontroller
 
 import (
-	"fmt"
 	"net/http"
 
 	"eikva.ru/eikva/database"
@@ -10,9 +9,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
+type  GetTestCaseGroupsResponse struct {
+	Groups []models.TestCaseGroupResponse `json:"groups"`
+}
+
 func GetTestCaseGroups(ctx *gin.Context) {
-	cases := database.GetTestCaseGroups()
-	ctx.JSON(http.StatusOK, &cases)
+	var response GetTestCaseGroupsResponse
+	cases := *database.GetTestCaseGroups()
+	if cases != nil {
+		response.Groups = cases
+	} else {
+		response.Groups = []models.TestCaseGroupResponse{}
+	}
+
+	ctx.JSON(http.StatusOK, &response)
 }
 
 type AddTestCaseGroupPayload struct {
@@ -34,7 +45,6 @@ func AddTestCaseGroup(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("user add test case: %+v\n", user)
 	tcg, err := database.AddTestCaseGroup(payload.Name, user)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, models.ServerErrorResponse{
