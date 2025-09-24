@@ -2,6 +2,7 @@ package session
 
 import (
 	"errors"
+	"os"
 	"time"
 
 	"eikva.ru/eikva/database"
@@ -22,6 +23,7 @@ type EikvaSessionTokens struct {
 }
 
 var parser = jwt.NewParser(jwt.WithValidMethods([]string{"HS512"}))
+var jwtSecret = os.Getenv("JWT_SECRET")
 
 func CreateToken(user *models.User, tokenID string, ttl time.Duration) string {
 	now := time.Now()
@@ -38,7 +40,7 @@ func CreateToken(user *models.User, tokenID string, ttl time.Duration) string {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, tokenCalims)
-	result, err := token.SignedString([]byte("secret"))
+	result, err := token.SignedString([]byte(jwtSecret))
 
 	if err != nil {
 		panic("token signature fail")
@@ -65,7 +67,7 @@ func (e ErrNotMatchingId) Error() string {
 func GetTokenClaims(token string) (*EikvaClaims, *jwt.Token,  error) {
 	claims := &EikvaClaims{}
 	parsed, err := parser.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
+		return []byte(jwtSecret), nil
 	})
 
 	return claims, parsed, err

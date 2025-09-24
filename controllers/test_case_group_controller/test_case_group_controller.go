@@ -9,9 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
-type  GetTestCaseGroupsResponse struct {
-	Groups []models.TestCaseGroupResponse `json:"groups"`
+type GetTestCaseGroupsResponse struct {
+	Groups []models.TestCaseGroupFormatted `json:"groups"`
 }
 
 func GetTestCaseGroups(ctx *gin.Context) {
@@ -20,7 +19,7 @@ func GetTestCaseGroups(ctx *gin.Context) {
 	if cases != nil {
 		response.Groups = cases
 	} else {
-		response.Groups = []models.TestCaseGroupResponse{}
+		response.Groups = []models.TestCaseGroupFormatted{}
 	}
 
 	ctx.JSON(http.StatusOK, &response)
@@ -54,5 +53,5 @@ func AddTestCaseGroup(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, tcg.GetRequestPayloadPassedCreator(user.Login))
+	ctx.JSON(http.StatusOK, &tcg)
 }

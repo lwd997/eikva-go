@@ -1,1 +1,4 @@
 eikva.db*
+.env
+.env.local
+*.local.*

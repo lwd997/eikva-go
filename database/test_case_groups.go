@@ -7,15 +7,15 @@ import (
 	"github.com/google/uuid"
 )
 
-func AddTestCaseGroup(name string, user *models.User) (*models.TestCaseGroup, error) {
+func AddTestCaseGroup(name string, user *models.User) (*models.TestCaseGroupFormatted, error) {
 	if (user.UUID == "") {
 		return nil, errors.New("placeholer error: no uuid in passed user")
 	}
 
-	tcg := models.TestCaseGroup{
+	tcg := &models.TestCaseGroup{
 		Name:   name,
 		UUID:   uuid.New().String(),
-		Status: models.TCGStatusNone,
+		Status: models.StatusNone,
 		Creator: user.UUID,
 	}
 
@@ -36,11 +36,17 @@ func AddTestCaseGroup(name string, user *models.User) (*models.TestCaseGroup, er
 
 	tcg.ID = int(id)
 
-	return &tcg, nil
+	formatted := &models.TestCaseGroupFormatted{
+		TestCaseGroup: *tcg,
+		Status: tcg.Status.Name(),
+		Creator: user.Login,
+	}
+
+	return formatted, nil
 }
 
-func GetTestCaseGroups() *[]models.TestCaseGroupResponse  {
-	var result []models.TestCaseGroupResponse
+func GetTestCaseGroups() *[]models.TestCaseGroupFormatted  {
+	var result []models.TestCaseGroupFormatted
 	err := GetDB().Select(
 		&result,
 		`SELECT

@@ -6,6 +6,8 @@ import (
 	"github.com/google/uuid"
 )
 
+/* === User === */
+
 type User struct {
 	ID             int            `db:"id" json:"id"`
 	UUID           string         `db:"uuid" json:"uuid"`
@@ -20,6 +22,8 @@ func (u *User) UpdateTokenIDs() {
 	u.RefreshTokenID = sql.NullString{String: uuid.New().String(), Valid: true}
 }
 
+/* === HTTP === */
+
 type ServerErrorResponse struct {
 	Error string `json:"error"`
 }
@@ -33,49 +37,86 @@ func (e RequestError) Error() string {
 	return e.Message
 }
 
-type TestCaseGroupStatus int
+/* === Test Case Groups === */
+
+type Status int
 
 const (
-	TCGStatusNone TestCaseGroupStatus = iota
-	TCGStatusLoading
+	StatusNone Status = iota
+	StatusLoading
 )
 
-func (tcgs TestCaseGroupStatus) Name() string {
-	return [...]string{"None", "Loading"}[tcgs]
+func (tcgs Status) Name() string {
+	switch tcgs {
+	case StatusNone:
+		return "none"
+	case StatusLoading:
+		return "loading"
+	default:
+		return string(tcgs)
+	}
 }
 
 type TestCaseGroup struct {
 	ID      int                 `db:"id" json:"id"`
-	UUID    string              `db:"uuid" json:"uuid"`
-	Status  TestCaseGroupStatus `db:"status" json:"status"`
-	Name    string              `db:"name" json:"name"`
-	Creator string              `db:"creator" json:"creator"`
+	UUID    string `db:"uuid" json:"uuid"`
+	Status  Status `db:"status" json:"status"`
+	Name    string `db:"name" json:"name"`
+	Creator string `db:"creator" json:"creator"`
 }
 
-type TestCaseGroupResponse struct {
-	TestCaseGroup	`db:",inline" json:",inline"`
-	Status  string  `db:"status" json:"status"`
+type TestCaseGroupFormatted struct {
+	TestCaseGroup `db:",inline" json:",inline"`
+	Status        string `db:"status" json:"status"`
+	Creator       string `db:"creator" json:"creator"`
+}
+
+/* === Test Cases === */
+
+type TestCase struct {
+	ID            int    `db:"id" json:"id"`
+	UUID          string `db:"uuid" json:"uuid"`
+	Status        Status `db:"status" json:"status"`
+	Name          string `db:"name" json:"name"`
+	CreatedAt     string `db:"created_at" json:"created_at"`
+	PreCondition  string `db:"pre_condition" json:"pre_condition"`
+	PostCondition string `db:"post_condition" json:"post_condition"`
+	Description   string `db:"description" json:"description"`
+	Creator       string `db:"creator" json:"creator"`
+	TestCaseGroup string `db:"test_case_group" json:"test_case_group"`
+}
+
+type TestCaseFormatted struct {
+	TestCase `db:",inline" json:",inline"`
+	Status   string `db:"status" json:"status"`
 	Creator  string `db:"creator" json:"creator"`
 }
 
-func (tcg TestCaseGroup) GetRequestPayloadPassedCreator(creator string) TestCaseGroupResponse {
-	return TestCaseGroupResponse{
-		TestCaseGroup: tcg,
-		Creator: creator,
-		Status: tcg.Status.Name(),
-	}
+func (tc *TestCase) UpdateUUID() {
+	tc.UUID = uuid.New().String()
 }
-/*
-func (tcg TestCaseGroup) GetRequestPayloadSelectCrearor() (*TestCaseGroupResponse, error) {
-	user, err := database.GetExistingUserByUUID(tcg.Creator)
-	if err != nil {
-		return nil, err
-	}
 
-	return TestCaseGroupResponse{
-		TestCaseGroup: tcg,
-		Creator: &user.Login,
-		Status: tcg.Status.Name(),
-	}
+/* === Steps === */
+
+type TestCaseStep struct {
+	ID             int    `db:"id" json:"id"`
+	UUID           string `db:"uuid" json:"uuid"`
+	Status         Status `db:"status" json:"status"`
+	Num            int    `db:"num" json:"num"`
+	Description    string `db:"description" json:"description"`
+	Data           string `db:"data" json:"data"`
+	ExpectedResult string `db:"expected_result" json:"expected_result"`
+	Creator        string `db:"creator" json:"creator"`
+	TestCase       string `db:"test_case" json:"test_case"`
+	CreatedAt      string `db:"created_at" json:"created_at"`
 }
-*/
+
+type TestCaseStepFormatted struct {
+	TestCaseStep `db:",inline" json:",inline"`
+	Status       string `db:"status" json:"status"`
+	Creator      string `db:"creator" json:"creator"`
+}
+
+func (tcs *TestCaseStep) UpdateUUID() {
+	tcs.UUID = uuid.New().String()
+}

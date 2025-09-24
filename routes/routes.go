@@ -2,7 +2,9 @@ package routes
 
 import (
 	authcontroller "eikva.ru/eikva/controllers/auth_controller"
+	testcasecontroller "eikva.ru/eikva/controllers/test_case_controller"
 	testcasegroupcontroller "eikva.ru/eikva/controllers/test_case_group_controller"
+	testcasestepscontroller "eikva.ru/eikva/controllers/test_case_steps_controller"
 	"eikva.ru/eikva/middlewares"
 	"github.com/gin-gonic/gin"
 )
@@ -22,9 +24,21 @@ func InitRoutes(router *gin.Engine) {
 
 	protected := router.Group("/")
 	protected.Use(middlewares.BearerAuth)
-	api := protected.Group("/groups")
+
+	groups := protected.Group("/groups")
 	{
-		api.GET("/get", testcasegroupcontroller.GetTestCaseGroups)
-		api.POST("/add", testcasegroupcontroller.AddTestCaseGroup)
+		groups.GET("/get", testcasegroupcontroller.GetTestCaseGroups)
+		groups.POST("/add", testcasegroupcontroller.AddTestCaseGroup)
+	}
+
+	testCases := protected.Group("/test-cases")
+	{
+		testCases.POST("/add", testcasecontroller.CreateTestCase)
+	}
+
+
+	steps := protected.Group("/steps")
+	{
+		steps.POST("/add", testcasestepscontroller.CreateEmptyStep)
 	}
 }

@@ -11,13 +11,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AuthFormRequestBody struct {
+type AuthFormPayload struct {
 	Login    string `json:"login" validate:"required,min=1,max=20"`
 	Password string `json:"password" validate:"required,min=5,max=20"`
 }
 
 func RegisterNewUser(ctx *gin.Context) {
-	var payload AuthFormRequestBody
+	var payload AuthFormPayload
 	if !tools.HandleRequestBodyParsing(ctx, &payload) {
 		return
 	}
@@ -50,7 +50,7 @@ func RegisterNewUser(ctx *gin.Context) {
 }
 
 func Login(ctx *gin.Context) {
-	var payload AuthFormRequestBody
+	var payload AuthFormPayload
 	if !tools.HandleRequestBodyParsing(ctx, &payload) {
 		return
 	}
