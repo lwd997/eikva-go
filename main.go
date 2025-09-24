@@ -12,11 +12,11 @@ import (
 )
 
 func main() {
+	err := godotenv.Load()
 	if os.Getenv("JWT_SECRET") == "" {
 		log.Fatalln("Не указан env JWT_SECRET")
 	}
 
-	err := godotenv.Load()
 	if err != nil {
 		panic(err.Error())
 	}

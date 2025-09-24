@@ -39,36 +39,3 @@ func CreateEmptyStep(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, step)
 }
-
-/*
-type CreateTestCasePayload struct {
-	UserInput     string `json:"user_input" validate:"required"`
-	TestCaseGroup string `json:"test_case_group" validate:"required"`
-}
-
-func CreateTestCase(ctx *gin.Context) {
-	user, err := tools.GetUserFromRequestCtx(ctx)
-	if err != nil {
-		return
-	}
-
-	var payload CreateTestCasePayload
-	if !tools.HandleRequestBodyParsing(ctx, &payload) {
-		return
-	}
-
-	if !tools.HadleRequestBodyValidation(ctx, &payload) {
-		return
-	}
-
-	tc, err := database.CreateEmptyTestCase(payload.TestCaseGroup, user)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
-			Error: err.Error(),
-		})
-
-		return
-	}
-
-	ctx.JSON(http.StatusOK, tc)
-}*/

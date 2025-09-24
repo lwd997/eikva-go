@@ -18,7 +18,39 @@
         "params": [],
         "body": {
           "mode": "json",
-          "json": "{\n  \"name\": \"Группа - это круто112\"\n}",
+          "json": "{\n  \"name\": \"Группа, в которой лежат тест-кейсы\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Get test case groups",
+      "filename": "Get test case groups.bru",
+      "seq": 4,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/groups/get",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -57,7 +89,7 @@
         "params": [],
         "body": {
           "mode": "json",
-          "json": "{\n  \"login\": \"Molotilkin Ivan\",\n  \"password\": \"e99393\"\n}",
+          "json": "{\n  \"login\": \"Синяя Лошадка\",\n  \"password\": \"e99393\"\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -71,77 +103,6 @@
         "docs": "",
         "auth": {
           "mode": "inherit"
-        }
-      }
-    },
-    {
-      "type": "http",
-      "name": "Register",
-      "filename": "Register.bru",
-      "seq": 3,
-      "settings": {
-        "encodeUrl": false
-      },
-      "tags": [],
-      "request": {
-        "url": "http://localhost:3000/auth/register",
-        "method": "POST",
-        "headers": [
-          {
-            "name": "Content-Type",
-            "value": "application/json",
-            "enabled": true
-          }
-        ],
-        "params": [],
-        "body": {
-          "mode": "json",
-          "json": "{\n  \"login\": \"Molotilkin Ivan\",\n  \"password\": \"e99393\"\n}",
-          "formUrlEncoded": [],
-          "multipartForm": [],
-          "file": []
-        },
-        "script": {
-          "res": "const token = res.getBody().access_token;\nbru.setVar('access_token', token);"
-        },
-        "vars": {},
-        "assertions": [],
-        "tests": "",
-        "docs": "",
-        "auth": {
-          "mode": "inherit"
-        }
-      }
-    },
-    {
-      "type": "http",
-      "name": "Get test case groups",
-      "filename": "Get test case groups.bru",
-      "seq": 4,
-      "settings": {
-        "encodeUrl": true
-      },
-      "tags": [],
-      "request": {
-        "url": "http://localhost:3000/groups/get",
-        "method": "GET",
-        "headers": [],
-        "params": [],
-        "body": {
-          "mode": "none",
-          "formUrlEncoded": [],
-          "multipartForm": [],
-          "file": []
-        },
-        "script": {
-          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
-        },
-        "vars": {},
-        "assertions": [],
-        "tests": "",
-        "docs": "",
-        "auth": {
-          "mode": "none"
         }
       }
     },
@@ -183,6 +144,111 @@
           "mode": "none"
         }
       }
+    },
+    {
+      "type": "http",
+      "name": "Register",
+      "filename": "Register.bru",
+      "seq": 3,
+      "settings": {
+        "encodeUrl": false
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/auth/register",
+        "method": "POST",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"login\": \"Синяя Лошадка\",\n  \"password\": \"e99393\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "res": "const token = res.getBody().access_token;\nbru.setVar('access_token', token);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Create test case",
+      "filename": "Create test case.bru",
+      "seq": 7,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/test-cases/add",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"user_input\": \"Это я ввел текс для ИИ... чтобы понял он что делать-то конректно... такие дела... пояснения типа...\",\n  \"test_case_group\": \"\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Create step",
+      "filename": "Create step.bru",
+      "seq": 8,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/steps/add",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"test_case\": \"\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
     }
   ],
   "environments": [],
@@ -194,7 +260,7 @@
       "node_modules",
       ".git"
     ],
-    "size": 0.0010137557983398438,
-    "filesCount": 3
+    "size": 0.001613616943359375,
+    "filesCount": 6
   }
 }
