@@ -4,6 +4,39 @@
   "items": [
     {
       "type": "http",
+      "name": "Create step",
+      "filename": "Create step.bru",
+      "seq": 8,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/steps/add",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"test_case\": \"\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
       "name": "Create test case group",
       "filename": "Create test case group.bru",
       "seq": 3,
@@ -19,6 +52,39 @@
         "body": {
           "mode": "json",
           "json": "{\n  \"name\": \"Группа, в которой лежат тест-кейсы\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Create test case",
+      "filename": "Create test case.bru",
+      "seq": 7,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/test-cases/add",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"user_input\": \"Это я ввел текс для ИИ... чтобы понял он что делать-то конректно... такие дела... пояснения типа...\",\n  \"test_case_group\": \"\"\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -186,21 +252,20 @@
     },
     {
       "type": "http",
-      "name": "Create test case",
-      "filename": "Create test case.bru",
-      "seq": 7,
+      "name": "Get test cases",
+      "filename": "Get test cases.bru",
+      "seq": 9,
       "settings": {
         "encodeUrl": true
       },
       "tags": [],
       "request": {
-        "url": "http://localhost:3000/test-cases/add",
-        "method": "POST",
+        "url": "http://localhost:3000/groups/get-test-cases/cfd6032e-d954-43e5-9bb1-5bf31e755209",
+        "method": "GET",
         "headers": [],
         "params": [],
         "body": {
-          "mode": "json",
-          "json": "{\n  \"user_input\": \"Это я ввел текс для ИИ... чтобы понял он что делать-то конректно... такие дела... пояснения типа...\",\n  \"test_case_group\": \"\"\n}",
+          "mode": "none",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -219,21 +284,20 @@
     },
     {
       "type": "http",
-      "name": "Create step",
-      "filename": "Create step.bru",
-      "seq": 8,
+      "name": "Get steps",
+      "filename": "Get steps.bru",
+      "seq": 10,
       "settings": {
         "encodeUrl": true
       },
       "tags": [],
       "request": {
-        "url": "http://localhost:3000/steps/add",
-        "method": "POST",
+        "url": "http://localhost:3000/test-cases/get-steps/91118eb9-32be-44ac-aac4-e471dd4127cd",
+        "method": "GET",
         "headers": [],
         "params": [],
         "body": {
-          "mode": "json",
-          "json": "{\n  \"test_case\": \"\"\n}",
+          "mode": "none",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -260,7 +324,7 @@
       "node_modules",
       ".git"
     ],
-    "size": 0.001613616943359375,
-    "filesCount": 6
+    "size": 0.0024957656860351562,
+    "filesCount": 8
   }
 }
