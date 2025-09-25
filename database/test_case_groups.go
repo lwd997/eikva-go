@@ -8,14 +8,14 @@ import (
 )
 
 func AddTestCaseGroup(name string, user *models.User) (*models.TestCaseGroupFormatted, error) {
-	if (user.UUID == "") {
+	if user.UUID == "" {
 		return nil, errors.New("placeholer error: no uuid in passed user")
 	}
 
 	tcg := &models.TestCaseGroup{
-		Name:   name,
-		UUID:   uuid.New().String(),
-		Status: models.StatusNone,
+		Name:    name,
+		UUID:    uuid.New().String(),
+		Status:  models.StatusNone,
 		Creator: user.UUID,
 	}
 
@@ -38,14 +38,14 @@ func AddTestCaseGroup(name string, user *models.User) (*models.TestCaseGroupForm
 
 	formatted := &models.TestCaseGroupFormatted{
 		TestCaseGroup: *tcg,
-		Status: tcg.Status.Name(),
-		Creator: user.Login,
+		Status:        tcg.Status.Name(),
+		Creator:       user.Login,
 	}
 
 	return formatted, nil
 }
 
-func GetTestCaseGroups() *[]models.TestCaseGroupFormatted  {
+func GetTestCaseGroups() *[]models.TestCaseGroupFormatted {
 	var result []models.TestCaseGroupFormatted
 	err := GetDB().Select(
 		&result,
@@ -65,6 +65,64 @@ func GetTestCaseGroups() *[]models.TestCaseGroupFormatted  {
 
 	for i, entry := range result {
 		result[i].Status = entry.TestCaseGroup.Status.Name()
+	}
+
+	return &result
+}
+
+func IsTestGroupExisits(groupUUID string) bool {
+	var isGroupExists bool
+
+	err := GetDB().Get(
+		&isGroupExists,
+		"SELECT EXISTS(SELECT 1 FROM test_case_groups where uuid = ?)",
+		groupUUID,
+	)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return isGroupExists
+}
+
+func GetTestCaseGroupContents(groupUUID string) *[]models.TestCaseFormatted {
+	var selectResult []models.TestCase
+
+	err := GetDB().Select(
+		&selectResult,
+		`SELECT
+			test_cases.id,
+			test_cases.uuid,
+			test_cases.name,
+			test_cases.status,
+			test_cases.created_at,
+			test_cases.pre_condition,
+			test_cases.post_condition,
+			test_cases.description,
+			test_cases.source_ref,
+			test_cases.creator as creator_uuid,
+			users.login AS creator
+		FROM test_cases
+		JOIN users ON test_cases.creator = users.uuid where test_case_group = ?`,
+		groupUUID,
+	)
+
+
+	if err != nil {
+		panic(err)
+	}
+
+	result := make([]models.TestCaseFormatted, len(selectResult))
+
+	for i, entry := range selectResult {
+		result[i].TestCase = entry;
+		result[i].Status = entry.Status.Name()
+		result[i].Name = entry.Name.String
+		result[i].PreCondition = entry.PreCondition.String
+		result[i].PostCondition = entry.PostCondition.String
+		result[i].Description = entry.Description.String
+		result[i].SorceRef = entry.SorceRef.String
 	}
 
 	return &result

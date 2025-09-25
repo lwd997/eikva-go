@@ -1,6 +1,7 @@
 package testcasecontroller
 
 import (
+	"fmt"
 	"net/http"
 
 	"eikva.ru/eikva/database"
@@ -39,4 +40,42 @@ func CreateTestCase(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, tc)
+}
+
+type GetTestCaseStepsPayload struct {
+	TestCaseUUID string `uri:"testCaseUUID" binding:"required,uuid"`
+}
+
+type GetTestCaseStepsResonse struct {
+	Steps []models.TestCaseStepFormatted `json:"steps"`
+}
+
+func GetTestCaseSteps(ctx *gin.Context) {
+	var payload GetTestCaseStepsPayload
+	if err := ctx.ShouldBindUri(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
+			Error: err.Error(),
+		})
+
+		return
+	}
+
+	isTestCaseExisits := database.IsTestCaseExists(payload.TestCaseUUID)
+	if !isTestCaseExisits {
+		ctx.JSON(http.StatusNotFound, &models.ServerErrorResponse{
+			Error: fmt.Sprintf("Тест-кейса %s не существет", payload.TestCaseUUID),
+		})
+
+		return
+	}
+
+	var response GetTestCaseStepsResonse
+	tcs := *database.GetTestCaseSteps(payload.TestCaseUUID)
+	if tcs != nil {
+		response.Steps = tcs
+	} else {
+		response.Steps = []models.TestCaseStepFormatted{}
+	}
+
+	ctx.JSON(http.StatusOK, &response)
 }

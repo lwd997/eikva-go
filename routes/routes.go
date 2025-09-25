@@ -29,11 +29,13 @@ func InitRoutes(router *gin.Engine) {
 	{
 		groups.GET("/get", testcasegroupcontroller.GetTestCaseGroups)
 		groups.POST("/add", testcasegroupcontroller.AddTestCaseGroup)
+		groups.GET("/get-test-cases/:groupUUID", testcasegroupcontroller.GetTestCaseGroupContents)
 	}
 
 	testCases := protected.Group("/test-cases")
 	{
 		testCases.POST("/add", testcasecontroller.CreateTestCase)
+		testCases.GET("/get-steps/:testCaseUUID", testcasecontroller.GetTestCaseSteps)
 	}
 
 

@@ -1,6 +1,7 @@
 package session
 
 import (
+	"database/sql"
 	"errors"
 	"os"
 	"time"
@@ -64,7 +65,7 @@ func (e ErrNotMatchingId) Error() string {
 	return e.Message
 }
 
-func GetTokenClaims(token string) (*EikvaClaims, *jwt.Token,  error) {
+func GetTokenClaims(token string) (*EikvaClaims, *jwt.Token, error) {
 	claims := &EikvaClaims{}
 	parsed, err := parser.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(jwtSecret), nil
@@ -83,6 +84,9 @@ func ValidateSessionTokenAndGetUser(token string) (*models.User, error) {
 	if parsed.Valid {
 		user, err := database.GetExistingUserByUUID(claims.UserUUID)
 		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, errors.New("Сессия не найдена")
+			}
 			return nil, err
 		}
 

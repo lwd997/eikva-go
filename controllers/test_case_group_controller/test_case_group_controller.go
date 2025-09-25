@@ -1,6 +1,7 @@
 package testcasegroupcontroller
 
 import (
+	"fmt"
 	"net/http"
 
 	"eikva.ru/eikva/database"
@@ -46,7 +47,7 @@ func AddTestCaseGroup(ctx *gin.Context) {
 
 	tcg, err := database.AddTestCaseGroup(payload.Name, user)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, models.ServerErrorResponse{
+		ctx.JSON(http.StatusInternalServerError, &models.ServerErrorResponse{
 			Error: err.Error(),
 		})
 
@@ -54,4 +55,42 @@ func AddTestCaseGroup(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, &tcg)
+}
+
+type GetTestCaseGroupContentsPayload struct {
+	GroupUUID string `uri:"groupUUID" binding:"required,uuid"`
+}
+
+type GetTestCaseGroupContentResponse struct {
+	TestCases []models.TestCaseFormatted `json:"test_cases"`
+}
+
+func GetTestCaseGroupContents(ctx *gin.Context) {
+	var payload GetTestCaseGroupContentsPayload
+	if err := ctx.ShouldBindUri(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
+			Error: err.Error(),
+		})
+
+		return
+	}
+
+	isGroupExists := database.IsTestGroupExisits(payload.GroupUUID)
+	if !isGroupExists {
+		ctx.JSON(http.StatusNotFound, &models.ServerErrorResponse{
+			Error: fmt.Sprintf("Группы %s не существет", payload.GroupUUID),
+		})
+
+		return
+	}
+
+	var response GetTestCaseGroupContentResponse
+	tc := *database.GetTestCaseGroupContents(payload.GroupUUID)
+	if tc != nil {
+		response.TestCases = tc
+	} else {
+		response.TestCases = []models.TestCaseFormatted{}
+	}
+
+	ctx.JSON(http.StatusOK, &response)
 }

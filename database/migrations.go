@@ -29,6 +29,7 @@ func Migrate() {
 		pre_condition TEXT,
 		post_condition TEXT,
 		description TEXT,
+		source_ref TEXT,
 		creator TEXT NOT NULL,
 		test_case_group TEXT NOT NULL,
 		FOREIGN KEY (creator) REFERENCES users(uuid),

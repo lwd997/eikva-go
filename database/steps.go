@@ -56,9 +56,12 @@ func CreateEmptyStep(testCaseUUID string, user *models.User) (*models.TestCaseSt
 	step.ID = int(id)
 
 	formatted := &models.TestCaseStepFormatted{
-		TestCaseStep: *step,
-		Status:       step.Status.Name(),
-		Creator:      user.Login,
+		TestCaseStep:   *step,
+		Status:         step.Status.Name(),
+		Creator:        user.Login,
+		Data:           step.Data.String,
+		ExpectedResult: step.ExpectedResult.String,
+		Description:    step.Description.String,
 	}
 
 	return formatted, nil
