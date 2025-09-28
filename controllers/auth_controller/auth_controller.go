@@ -106,3 +106,31 @@ func Logout(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"status": true})
 }
+
+type UpdateTokensPayload struct {
+	RefreshToken string `json:"refresh_token" validate:"required"`
+}
+
+func UpdateTokens(ctx *gin.Context) {
+	var payload UpdateTokensPayload
+	if !tools.HandleRequestBodyParsing(ctx, &payload) {
+		return
+	}
+
+	if !tools.HadleRequestBodyValidation(ctx, &payload) {
+		return
+	}
+
+	user, err := session.ValidateSessionTokenAndGetUser(payload.RefreshToken, session.TokenTypeRefresh)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, models.ServerErrorResponse{
+			Error: err.Error(),
+		})
+		return
+	}
+
+	user.UpdateTokenIDs()
+	database.UpdateTokenIDs(user)
+	tokens := session.CreateSessionTokens(user)
+	ctx.JSON(http.StatusOK, tokens)
+}

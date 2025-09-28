@@ -33,7 +33,7 @@ func Migrate() {
 		creator TEXT NOT NULL,
 		test_case_group TEXT NOT NULL,
 		FOREIGN KEY (creator) REFERENCES users(uuid),
-		FOREIGN KEY (test_case_group) REFERENCES test_case_groups(uuid)
+		FOREIGN KEY (test_case_group) REFERENCES test_case_groups(uuid) ON DELETE CASCADE
 	);`)
 
 	db.MustExec(`CREATE TABLE IF NOT EXISTS test_case_steps (
@@ -48,6 +48,6 @@ func Migrate() {
 		test_case TEXT NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY (creator) REFERENCES users(uuid),
-		FOREIGN KEY (test_case) REFERENCES test_cases(uuid)
+		FOREIGN KEY (test_case) REFERENCES test_cases(uuid) ON DELETE CASCADE
 	);`)
 }

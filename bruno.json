@@ -18,7 +18,7 @@
         "params": [],
         "body": {
           "mode": "json",
-          "json": "{\n  \"test_case\": \"\"\n}",
+          "json": "{\n  \"test_case\": \"a18b2e29-1dde-4ebd-97cf-3140a5dd6588\"\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -84,7 +84,39 @@
         "params": [],
         "body": {
           "mode": "json",
-          "json": "{\n  \"user_input\": \"Это я ввел текс для ИИ... чтобы понял он что делать-то конректно... такие дела... пояснения типа...\",\n  \"test_case_group\": \"\"\n}",
+          "json": "{\n  \"user_input\": \"Это я ввел текст для ИИ... чтобы понял он что делать-то конректно... такие дела... пояснения типа...\",\n  \"test_case_group\": \"3324d3f0-f33f-4f77-89a4-cba866ab17a5\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Get steps",
+      "filename": "Get steps.bru",
+      "seq": 10,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/test-cases/get-steps/96c6c6f6-f7b4-463d-b401-668ace6ad629",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -135,6 +167,38 @@
     },
     {
       "type": "http",
+      "name": "Get test cases",
+      "filename": "Get test cases.bru",
+      "seq": 9,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/groups/get-test-cases/3324d3f0-f33f-4f77-89a4-cba866ab17a5",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
       "name": "Login",
       "filename": "Login.bru",
       "seq": 1,
@@ -161,7 +225,7 @@
           "file": []
         },
         "script": {
-          "res": "const token = res.getBody().access_token;\nbru.setVar('access_token', token);"
+          "res": "const body = res.getBody();\nconst { access_token, refresh_token } = body;\nbru.setVar('access_token', access_token);\nbru.setVar('refresh_token', refresh_token);"
         },
         "vars": {},
         "assertions": [],
@@ -239,7 +303,7 @@
           "file": []
         },
         "script": {
-          "res": "const token = res.getBody().access_token;\nbru.setVar('access_token', token);"
+          "res": "const body = res.getBody();\nconst { access_token, refresh_token } = body;\nbru.setVar('access_token', access_token);\nbru.setVar('refresh_token', refresh_token);"
         },
         "vars": {},
         "assertions": [],
@@ -252,20 +316,60 @@
     },
     {
       "type": "http",
-      "name": "Get test cases",
-      "filename": "Get test cases.bru",
-      "seq": 9,
+      "name": "Update tokens",
+      "filename": "Update tokens.bru",
+      "seq": 11,
+      "settings": {
+        "encodeUrl": false
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/auth/update-tokens",
+        "method": "POST",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"refresh_token\": \"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZWE2MDg0MzgtZmM3YS00ZDg4LWE4NmMtNmY1NDQ3NDkxZDViIiwidXNlcl9sb2dpbiI6ItCh0LjQvdGP0Y8g0JvQvtGI0LDQtNC60LAiLCJ0b2tlbl9pZCI6ImIyZTMyODg5LWU0MjItNGU5Yi04NzljLTYyYzBjNjgzNDc2ZCIsImlzcyI6IkVpa3ZhIiwic3ViIjoiZWE2MDg0MzgtZmM3YS00ZDg4LWE4NmMtNmY1NDQ3NDkxZDViIiwiZXhwIjoxNzU5NjY0NTY4LCJpYXQiOjE3NTkwNTk3Njh9.wyiOtc8XVz20mofAykPPhTRAwpnUBIsbGZVrIS6K3Za9bTnGmCAUbw74L1AMe0ncGixCFM1zbaB_Q8MweAY0vQ\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "res": "const body = res.getBody();\nconst { access_token, refresh_token } = body;\nbru.setVar('access_token', access_token);\nbru.setVar('refresh_token', refresh_token);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Update test case",
+      "filename": "Update test case.bru",
+      "seq": 12,
       "settings": {
         "encodeUrl": true
       },
       "tags": [],
       "request": {
-        "url": "http://localhost:3000/groups/get-test-cases/cfd6032e-d954-43e5-9bb1-5bf31e755209",
-        "method": "GET",
+        "url": "http://localhost:3000/test-cases/update",
+        "method": "POST",
         "headers": [],
         "params": [],
         "body": {
-          "mode": "none",
+          "mode": "json",
+          "json": "{\n  \"uuid\": \"f030d669-299f-4e08-9286-4ca95ebc3fc9\",\n  \"name\": \"1222\",\n  \"pre_condition\": \"\",\n  \"post_condition\": \"\",\n  \"description\": \"\",\n  \"source_ref\": \"\"\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -284,20 +388,249 @@
     },
     {
       "type": "http",
-      "name": "Get steps",
-      "filename": "Get steps.bru",
-      "seq": 10,
+      "name": "FAKE completions",
+      "filename": "FAKE completions.bru",
+      "seq": 13,
       "settings": {
         "encodeUrl": true
       },
       "tags": [],
       "request": {
-        "url": "http://localhost:3000/test-cases/get-steps/91118eb9-32be-44ac-aac4-e471dd4127cd",
-        "method": "GET",
+        "url": "http://localhost:3001/api/chat",
+        "method": "POST",
         "headers": [],
         "params": [],
         "body": {
           "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Init tc generation",
+      "filename": "Init tc generation.bru",
+      "seq": 15,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/test-cases/start-generation",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"amount\": 10,\n  \"user_input\": \"Это я ввел текс для ИИ... чтобы понял он что делать-то конректно... такие дела... пояснения типа...\",\n  \"test_case_group\": \"3324d3f0-f33f-4f77-89a4-cba866ab17a5\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Update step",
+      "filename": "Update step.bru",
+      "seq": 13,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/steps/update",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"uuid\": \"64477742-382d-4444-af55-daa258499173\",\n  \"data\": \"PRIVET\",\n  \"expected_result\": \"23\",\n  \"description\": \"\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Delete step",
+      "filename": "Delete step.bru",
+      "seq": 16,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/steps/delete",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"uuid\": \"c5d77e67-a6c9-406a-9e4e-09e96a2cae2c\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Swap steps",
+      "filename": "Swap steps.bru",
+      "seq": 17,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/steps/swap",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"first\": \"c5d77e67-a6c9-406a-9e4e-09e96a2cae2c\",\n  \"second\": \"ef88ce60-d4c6-43c7-b9ec-5914032577bb\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Delete test case",
+      "filename": "Delete test case.bru",
+      "seq": 18,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/test-cases/delete",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"uuid\": \"a18b2e29-1dde-4ebd-97cf-3140a5dd6588\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Delete tg group",
+      "filename": "Delete tg group.bru",
+      "seq": 19,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/groups/delete",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"uuid\": \"3a666bf8-e336-4f64-b90d-f01f8e207e1b\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {
+          "req": "req.setHeader('Authorization', `Bearer ${bru.getVar('access_token')}`);"
+        },
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Rename tc group",
+      "filename": "Rename tc group.bru",
+      "seq": 20,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:3000/groups/rename",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"name\": \"Удачное имя для группы тест-кейсов\",\n  \"uuid\": \"3324d3f0-f33f-4f77-89a4-cba866ab17a5\"\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -324,7 +657,7 @@
       "node_modules",
       ".git"
     ],
-    "size": 0.0024957656860351562,
-    "filesCount": 8
+    "size": 0.0030078887939453125,
+    "filesCount": 10
   }
 }

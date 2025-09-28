@@ -1,69 +1,60 @@
 package ai
 
 import (
-	"os"
+	"encoding/json"
+	"fmt"
+	"eikva.ru/eikva/ai/prompts"
+	envvars "eikva.ru/eikva/env_vars"
+	"eikva.ru/eikva/models"
+	"eikva.ru/eikva/requests"
 )
 
-/*
-OPEN_AI_BASE_URL=http://localhost:11434
-OPEN_AI_COMPLETIONS_PATHNAME=/api/chat
-OPEN_AI_TOKENIZE_URL=/tokenize
-*/
-
-var openaiApiKey = os.Getenv("OPEN_AI_API_KEY")
-var openaiBaseUrl = os.Getenv("OPEN_AI_BASE_URL")
-var openAiCompletionsUrl = os.Getenv("OPEN_AI_TOKENIZE_URL")
-
-var completionsUrl = openaiBaseUrl + openAiCompletionsUrl
-
-type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
+func GetCreateTestCaseFormat(amount int) map[string]any {
+	return map[string]any{
+		"type": "object",
+		"properties": map[string]any{
+			"result": map[string]any{
+				"type":     "array",
+				"minItems": amount,
+				"maxItems": amount,
+				"items": map[string]any{
+					"type": "object",
+					"properties": map[string]any{
+						"name":           map[string]any{"type": "string"},
+						"description":    map[string]any{"type": "string"},
+						"source_ref":     map[string]any{"type": "string"},
+						"pre_condition":  map[string]any{"type": "string"},
+						"post_condition": map[string]any{"type": "string"},
+						"steps": map[string]any{
+							"type": "array",
+							"minItems": 1,
+							"maxItems": 20,
+							"items": map[string]any{
+								"type": "object",
+								"properties": map[string]any{
+									"description":     map[string]any{"type": "string"},
+									"data":            map[string]any{"type": "string"},
+									"expected_result": map[string]any{"type": "string"},
+								},
+								"required": []string{"description", "data", "expected_result"},
+							},
+						},
+					},
+					"required": []string{"name", "description", "source_ref", "pre_condition", "post_condition", "steps"},
+				},
+			},
+		},
+	}
 }
 
-type Request struct {
-	Model    string    `json:"model"`
-	Messages []Message `json:"messages"`
-	Stream   bool      `json:"stream"`
-	Think    bool      `json:"think"`
-	Format   any       `json:"format"`
-}
-
-var createTestCaseFormat = map[string]any{
-	"type": "object",
-	"properties": map[string]any{
-		"name": map[string]any{
-			"type":        "string",
-			"description": "Обязательное поле: название тест-кейса",
-		},
-		"pre_condition": map[string]any{
-			"type":        "string",
-			"description": "Необязательное поле (может быть пустой строкой): условия, которые должны быть выполнены до начала теста",
-		},
-		"actions": map[string]any{
-			"type":        "string",
-			"description": "Обязательное поле: последовательность действий пользователя в системе",
-		},
-		"expected_result": map[string]any{
-			"type":        "string",
-			"description": "Обязательное поле: результат, который система должна показать после действий",
-		},
-		"post_condition": map[string]any{
-			"type":        "string",
-			"description": "Необязательное поле (может быть пустой строкой): действия или состояние системы после теста",
-		},
-	},
-	"required": []string{"name", "pre_condition", "actions", "expected_result", "post_condition"},
-}
-
-/*
-func CreateTestCase() {
-	reqBody := Request{
-		Model: "qwen3:latest",
+func StartTestCaseListGeneration(uuidList *[]string, user *models.User) (*[]*models.CreateTestCaseOutputEntry, error) {
+	completionsUrl := envvars.Get(envvars.OpenAiBaseUrl) + envvars.Get(envvars.OpenAiCompletionsPathName)
+	reqBody := models.OpenAiRequest{
+		Model:  "qwen3:latest",
 		Stream: false,
 		Think:  false,
-		Format: createTestCaseFormat,
-		Messages: []Message{
+		Format: GetCreateTestCaseFormat(len(*uuidList)),
+		Messages: []models.ModelMessage{
 			{
 				Role:    "system",
 				Content: prompts.CreateTestCaseSystem,
@@ -74,5 +65,19 @@ func CreateTestCase() {
 			},
 		},
 	}
+
+	var response models.ModelReponse
+	err := requests.Post(completionsUrl, reqBody, &response)
+
+	if err != nil {
+		fmt.Printf("tmp error (handle error ws notify + status db sasus update)\n", response, err)
+		return nil, err
+	}
+
+	var generated models.ModelMessageContent
+	if err := json.Unmarshal([]byte(response.Message.Content), &generated); err != nil {
+		return nil, err
+	}
+
+	 return &generated.Result, nil
 }
-*/

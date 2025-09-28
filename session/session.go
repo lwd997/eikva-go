@@ -74,7 +74,14 @@ func GetTokenClaims(token string) (*EikvaClaims, *jwt.Token, error) {
 	return claims, parsed, err
 }
 
-func ValidateSessionTokenAndGetUser(token string) (*models.User, error) {
+type TokenType int
+
+const (
+	TokenTypeAccess TokenType = iota
+	TokenTypeRefresh
+)
+
+func ValidateSessionTokenAndGetUser(token string, tokenType TokenType) (*models.User, error) {
 	claims, parsed, err := GetTokenClaims(token)
 
 	if err != nil {
@@ -89,12 +96,23 @@ func ValidateSessionTokenAndGetUser(token string) (*models.User, error) {
 			}
 			return nil, err
 		}
+		var tokenID sql.NullString
+		switch tokenType {
+		case TokenTypeAccess:
+			tokenID = user.AccessTokenID
+			break;
+		case TokenTypeRefresh:
+			tokenID = user.RefreshTokenID
+			break;
+		default:
+			return nil, errors.New("Не верный тип токена")
+		}
 
-		if !user.AccessTokenID.Valid || user.AccessTokenID.String == "" {
+		if !tokenID.Valid || tokenID.String == "" {
 			return nil, errors.New("placeholder error: no AccessTokenID in DB")
 		}
 
-		if claims.TokenID == "" || claims.TokenID != user.AccessTokenID.String {
+		if claims.TokenID == "" || claims.TokenID != tokenID.String {
 			return nil, ErrNotMatchingId{
 				Message: "Не совпадает ID токена",
 			}

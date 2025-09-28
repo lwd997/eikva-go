@@ -6,6 +6,13 @@ import (
 	"github.com/google/uuid"
 )
 
+/* === Generic === */
+
+type GenericOwnershipCheckFields struct {
+	UUID    string
+	Creator string
+}
+
 /* === User === */
 
 type User struct {
@@ -23,6 +30,10 @@ func (u *User) UpdateTokenIDs() {
 }
 
 /* === HTTP === */
+
+type ServerBlankOk struct {
+	Ok bool `json:"ok"`
+}
 
 type ServerErrorResponse struct {
 	Error string `json:"error"`
@@ -44,6 +55,7 @@ type Status int
 const (
 	StatusNone Status = iota
 	StatusLoading
+	StatusError
 )
 
 func (tcgs Status) Name() string {
@@ -58,17 +70,17 @@ func (tcgs Status) Name() string {
 }
 
 type TestCaseGroup struct {
-	ID      int    `db:"id" json:"id"`
-	UUID    string `db:"uuid" json:"uuid"`
-	Status  Status `db:"status" json:"status"`
-	Name    string `db:"name" json:"name"`
-	Creator string `db:"creator" json:"creator"`
+	ID          int    `db:"id" json:"id"`
+	UUID        string `db:"uuid" json:"uuid"`
+	Status      Status `db:"status" json:"status"`
+	Name        string `db:"name" json:"name"`
+	Creator     string `db:"creator" json:"creator"`
+	CreatorUUID string `db:"creator_uuid" json:"creator_uuid"`
 }
 
 type TestCaseGroupFormatted struct {
 	TestCaseGroup `db:",inline" json:",inline"`
 	Status        string `db:"status" json:"status"`
-	Creator       string `db:"creator" json:"creator"`
 }
 
 /* === Test Cases === */
@@ -82,7 +94,7 @@ type TestCase struct {
 	PreCondition  sql.NullString `db:"pre_condition" json:"pre_condition"`
 	PostCondition sql.NullString `db:"post_condition" json:"post_condition"`
 	Description   sql.NullString `db:"description" json:"description"`
-	SorceRef      sql.NullString `db:"source_ref" json:"source_ref"`
+	SourceRef     sql.NullString `db:"source_ref" json:"source_ref"`
 	Creator       string         `db:"creator" json:"creator"`
 	CreatorUUID   string         `db:"creator_uuid" json:"creator_uuid"`
 	TestCaseGroup string         `db:"test_case_group" json:"test_case_group"`
@@ -91,12 +103,11 @@ type TestCase struct {
 type TestCaseFormatted struct {
 	TestCase      `db:",inline" json:",inline"`
 	Status        string `db:"status" json:"status"`
-	Creator       string `db:"creator" json:"creator"`
 	Name          string `db:"name" json:"name"`
 	PreCondition  string `db:"pre_condition" json:"pre_condition"`
 	PostCondition string `db:"post_condition" json:"post_condition"`
 	Description   string `db:"description" json:"description"`
-	SorceRef      string `db:"source_ref" json:"source_ref"`
+	SourceRef     string `db:"source_ref" json:"source_ref"`
 }
 
 func (tc *TestCase) UpdateUUID() {
@@ -122,7 +133,6 @@ type TestCaseStep struct {
 type TestCaseStepFormatted struct {
 	TestCaseStep   `db:",inline" json:",inline"`
 	Status         string `db:"status" json:"status"`
-	Creator        string `db:"creator" json:"creator"`
 	Data           string `db:"data" json:"data"`
 	Description    string `db:"description" json:"description"`
 	ExpectedResult string `db:"expected_result" json:"expected_result"`
@@ -130,4 +140,52 @@ type TestCaseStepFormatted struct {
 
 func (tcs *TestCaseStep) UpdateUUID() {
 	tcs.UUID = uuid.New().String()
+}
+
+/* === Open AI === */
+
+type ModelMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+type OpenAiRequest struct {
+	Model    string         `json:"model"`
+	Messages []ModelMessage `json:"messages"`
+	Stream   bool           `json:"stream"`
+	Think    bool           `json:"think"`
+	Format   any            `json:"format"`
+}
+
+type ModelReponse struct {
+	Model              string       `json:"model"`
+	CreatedAt          string       `json:"created_at"`
+	Message            ModelMessage `json:"message"`
+	Done               bool         `json:"done"`
+	DoneReason         string       `json:"done_reason"`
+	TotalDuration      int          `json:"total_duration"`
+	LoadDuration       int          `json:"load_duration"`
+	PromptEvalCount    int          `json:"prompt_eval_count"`
+	PromptEvalDuration int          `json:"prompt_eval_duration"`
+	EvalCount          int          `json:"eval_count"`
+	EvalDuration       int          `json:"eval_duration"`
+}
+
+type ModelMessageContent struct {
+	Result []*CreateTestCaseOutputEntry `json:"result"`
+}
+
+type CreateTestCaseOutputStep struct {
+	Data           string `json:"data"`
+	Description    string `json:"description"`
+	ExpectedResult string `json:"expected_result"`
+}
+
+type CreateTestCaseOutputEntry struct {
+	Name          string                     `json:"name"`
+	Description   string                     `json:"description"`
+	SourceRef     string                     `json:"source_ref"`
+	PreCondition  string                     `json:"pre_condition"`
+	PostCondition string                     `json:"post_condition"`
+	Steps         []CreateTestCaseOutputStep `json:"steps"`
 }

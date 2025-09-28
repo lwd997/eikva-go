@@ -2,6 +2,7 @@ package tools
 
 import (
 	"crypto/sha512"
+	"database/sql"
 	"encoding/hex"
 	"errors"
 	"net/http"
@@ -121,4 +122,11 @@ func GetUserFromRequestCtx(ctx *gin.Context) (*models.User, error) {
 	}
 
 	return user, nil
+}
+
+func MakeSqlNullString(entry string) sql.NullString {
+	var nullString sql.NullString
+	nullString.Valid = entry != ""
+	nullString.String = entry
+	return nullString
 }

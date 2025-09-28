@@ -1,25 +1,17 @@
 package main
 
 import (
-	"log"
-	"os"
-
 	"eikva.ru/eikva/database"
+	envvars "eikva.ru/eikva/env_vars"
+	"eikva.ru/eikva/fakeresponse"
 	"eikva.ru/eikva/middlewares"
 	"eikva.ru/eikva/routes"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load()
-	if os.Getenv("JWT_SECRET") == "" {
-		log.Fatalln("Не указан env JWT_SECRET")
-	}
-
-	if err != nil {
-		panic(err.Error())
-	}
+	envvars.Dotenv()
+	envvars.Init()
 
 	router := gin.Default()
 
@@ -27,5 +19,7 @@ func main() {
 	routes.InitRoutes(router)
 
 	database.Migrate()
+
+	go fakeresponse.FakeItForMePlease()
 	router.Run(":3000")
 }

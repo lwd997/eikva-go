@@ -32,7 +32,7 @@ var BearerAuth gin.HandlerFunc = func(ctx *gin.Context) {
 	}
 
 	token := strings.TrimPrefix(headerAuth, bearerPrefix)
-	user, err := session.ValidateSessionTokenAndGetUser(token)
+	user, err := session.ValidateSessionTokenAndGetUser(token, session.TokenTypeAccess)
 
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, models.ServerErrorResponse{
