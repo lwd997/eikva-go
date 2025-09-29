@@ -24,6 +24,7 @@ func InitRoutes(router *gin.Engine) {
 		authProtect.Use((middlewares.BearerAuth))
 		{
 			authProtect.POST("/logout", authcontroller.Logout)
+			authProtect.GET("/whoami", authcontroller.WhoAmI)
 		}
 	}
 

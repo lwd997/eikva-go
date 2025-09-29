@@ -64,7 +64,7 @@ func Login(ctx *gin.Context) {
 		var code int
 		var message string
 		if database.IsErrNoRows(err) {
-			code = http.StatusUnauthorized
+			code = http.StatusBadRequest
 			message = "Неверный логин или пароль"
 		} else {
 			code = http.StatusInternalServerError
@@ -104,7 +104,24 @@ func Logout(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": true})
+	ctx.JSON(http.StatusOK, models.ServerBlankOk{Ok: true})
+}
+
+type WhoAmIResponse struct {
+	Login string `json:"login"`
+	UUID  string `json:"uuid"`
+}
+
+func WhoAmI(ctx *gin.Context) {
+	user, err := tools.GetUserFromRequestCtx(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx.JSON(http.StatusOK, &WhoAmIResponse{
+		Login: user.Login,
+		UUID:  user.UUID,
+	})
 }
 
 type UpdateTokensPayload struct {
