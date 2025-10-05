@@ -3,6 +3,7 @@ package ws
 import (
 	"encoding/json"
 	"log"
+	"net/http"
 	"sync"
 
 	"eikva.ru/eikva/models"
@@ -11,7 +12,11 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var instance = websocket.Upgrader{}
+var instance = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
 
 type WSMessageType string
 
@@ -22,7 +27,7 @@ const (
 
 type WSUpdateNotification struct {
 	Type WSMessageType `json:"type"`
-	UUID []string        `json:"uuid"`
+	UUID []string      `json:"uuid"`
 }
 
 type WSAuthMessage struct {
@@ -62,7 +67,7 @@ func (cm *ConntectionManager) BroadCastTestCaseUpdate(uuid ...string) {
 	}
 }
 
-func NewConnectionManager() *ConntectionManager{
+func NewConnectionManager() *ConntectionManager {
 	return &ConntectionManager{
 		conntections: make(map[*websocket.Conn]ConnectionInfo),
 	}
@@ -119,15 +124,15 @@ func HandleSubscribers(ctx *gin.Context) {
 	WSConntections.Add(c, user)
 
 	for {
-        msgType, _, err := c.ReadMessage()
+		msgType, _, err := c.ReadMessage()
 		if msgType == websocket.CloseMessage {
-            log.Println("Client closed connection:")
+			log.Println("Client closed connection:")
 			break
 		}
 
-        if err != nil {
-            log.Println("Client disconnected:", err)
-            break
-        }
-    }
+		if err != nil {
+			log.Println("Client disconnected:", err)
+			break
+		}
+	}
 }

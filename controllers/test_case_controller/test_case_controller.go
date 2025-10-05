@@ -1,14 +1,16 @@
 package testcasecontroller
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 
-	//"eikva.ru/eikva/ai"
 	"eikva.ru/eikva/ai"
 	"eikva.ru/eikva/database"
 	"eikva.ru/eikva/models"
 	"eikva.ru/eikva/tools"
+	"eikva.ru/eikva/ws"
 	"github.com/gin-gonic/gin"
 )
 
@@ -74,9 +76,10 @@ func DeleteTestCase(ctx *gin.Context) {
 }
 
 type StartTestCasesGenerationPayload struct {
-	Amount        int    `json:"amount" validate:"required,min=1,max=10"`
-	UserInput     string `json:"user_input" validate:"required"`
-	TestCaseGroup string `json:"test_case_group" validate:"required"`
+	Amount        int      `json:"amount" validate:"required,min=1,max=10"`
+	UserInput     string   `json:"user_input"`
+	Files         []string `json:"files"`
+	TestCaseGroup string   `json:"test_case_group" validate:"required"`
 }
 
 type StartTestCasesGenerationResponse struct {
@@ -98,7 +101,19 @@ func StartTestCasesGeneration(ctx *gin.Context) {
 		return
 	}
 
-	reslult, err := database.InitTestCasesGeneration(payload.TestCaseGroup, payload.Amount, user)
+	payloadFilesLen := len(payload.Files)
+
+	fmt.Printf("%+v\n", payload)
+
+	if payload.UserInput == "" && payloadFilesLen < 1 {
+		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
+			Error: "Необходимо преложить файлы или ввести текст",
+		})
+
+		return
+	}
+
+	result, err := database.InitTestCasesGeneration(payload.TestCaseGroup, payload.Amount, user)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
 			Error: err.Error(),
@@ -107,16 +122,41 @@ func StartTestCasesGeneration(ctx *gin.Context) {
 		return
 	}
 
+	payload.UserInput = "[Пользователь]\n" + payload.UserInput
+
+	tokenCount := tools.CountTokens(payload.UserInput)
+	tokenCountTreshold := 20000
+
+	if payloadFilesLen > 0 {
+		for _, uuid := range payload.Files {
+			f, _ := database.GetFile(uuid)
+			if f != nil {
+				tokenCount += f.TokenCount
+
+				if tokenCount >= tokenCountTreshold {
+					ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
+						Error: "Превышен максимально допустимый размер запроса. Попробуйте разбить запрос на несколько частей.",
+					})
+					return
+				}
+
+				payload.UserInput += fmt.Sprintf("[%s]\n%s", f.Name, f.Content)
+			}
+		}
+	}
+
 	go func() {
-		generated, err := ai.StartTestCaseListGeneration(reslult.UUIDList, user)
+		generated, err := ai.StartTestCaseListGeneration(len(*result.UUIDList), &payload.UserInput)
 		if err != nil {
-			fmt.Println(err.Error())
-			return
+			database.SetTestCaseErrorStatus(result.UUIDList)
+		} else {
+			database.UpdateTestCaseWithModelResponse(result.UUIDList, *generated, user)
 		}
 
-		database.UpdateTestCaseWithModelResponse(reslult.UUIDList, *generated, user)
+		ws.WSConntections.BroadCastTestCaseUpdate(*result.UUIDList...)
 	}()
-	ctx.JSON(http.StatusOK, &StartTestCasesGenerationResponse{TestCases: reslult.TCList})
+
+	ctx.JSON(http.StatusOK, &StartTestCasesGenerationResponse{TestCases: result.TCList})
 }
 
 type UpdateTestCasePayload struct {
@@ -172,6 +212,11 @@ type GetTestCaseStepsResonse struct {
 }
 
 func GetTestCaseSteps(ctx *gin.Context) {
+	_, err := tools.GetUserFromRequestCtx(ctx)
+	if err != nil {
+		return
+	}
+
 	var payload GetTestCaseStepsPayload
 	if err := ctx.ShouldBindUri(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
@@ -199,4 +244,42 @@ func GetTestCaseSteps(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, &response)
+}
+
+type GetTestCasePayload struct {
+	TestCaseUUID string `uri:"testCaseUUID" validate:"required,uuid"`
+}
+
+func GetSingleTestCase(ctx *gin.Context) {
+	_, err := tools.GetUserFromRequestCtx(ctx)
+	if err != nil {
+		return
+	}
+
+	var payload GetTestCasePayload
+	if err := ctx.ShouldBindUri(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
+			Error: err.Error(),
+		})
+
+		return
+	}
+
+	result, err := database.GetTestCase(payload.TestCaseUUID)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			ctx.JSON(http.StatusNotFound, &models.ServerErrorResponse{
+				Error: fmt.Sprintf("Тест-кейса %s не существет", payload.TestCaseUUID),
+			})
+
+		} else {
+			ctx.JSON(http.StatusInternalServerError, &models.ServerErrorResponse{
+				Error: err.Error(),
+			})
+		}
+		return
+	}
+
+	ctx.JSON(http.StatusOK, &result)
 }

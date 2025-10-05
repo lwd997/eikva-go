@@ -5,6 +5,7 @@ import (
 	testcasecontroller "eikva.ru/eikva/controllers/test_case_controller"
 	testcasegroupcontroller "eikva.ru/eikva/controllers/test_case_group_controller"
 	testcasestepscontroller "eikva.ru/eikva/controllers/test_case_steps_controller"
+	uploadscontroller "eikva.ru/eikva/controllers/uploads_controller"
 	"eikva.ru/eikva/middlewares"
 	"eikva.ru/eikva/ws"
 	"github.com/gin-gonic/gin"
@@ -38,7 +39,17 @@ func InitRoutes(router *gin.Engine) {
 		groups.POST("/delete", testcasegroupcontroller.DeleteTestCaseGroup)
 		groups.POST("/rename", testcasegroupcontroller.UpdateTestCaseName)
 		groups.GET("/get-test-cases/:groupUUID", testcasegroupcontroller.GetTestCaseGroupContents)
+		groups.POST("/upload", testcasegroupcontroller.UploadFiles)
+		groups.GET("/uploads/:groupUUID", testcasegroupcontroller.GetGroupUploads)
+		groups.GET("/excel/:groupUUID", testcasegroupcontroller.ExportExcel)
+		groups.GET("/zephyr/:groupUUID", testcasegroupcontroller.ExportZephyr)
 	}
+
+	uploads := protected.Group("/uploads")
+	{
+		uploads.GET("/:uuid", uploadscontroller.GetSingleUpload)
+	}
+
 
 	testCases := protected.Group("/test-cases")
 	{
@@ -47,6 +58,7 @@ func InitRoutes(router *gin.Engine) {
 		testCases.POST("/start-generation", testcasecontroller.StartTestCasesGeneration)
 		testCases.POST("/update", testcasecontroller.UpdateTestCase)
 		testCases.GET("/get-steps/:testCaseUUID", testcasecontroller.GetTestCaseSteps)
+		testCases.GET("/get/:testCaseUUID", testcasecontroller.GetSingleTestCase)
 	}
 
 	steps := protected.Group("/steps")

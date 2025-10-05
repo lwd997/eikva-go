@@ -79,7 +79,7 @@ type InitTestCasesGenerationResult struct {
 }
 
 func InitTestCasesGeneration(groupUUID string, amount int, user *models.User) (*InitTestCasesGenerationResult, error) {
-	// TODO: передалать на Prparex
+	// TODO: передалать на Beginx
 	result := []models.TestCaseFormatted{}
 	uuidList := []string{}
 
@@ -179,6 +179,43 @@ func IsTestCaseExists(testCaseUUID string) bool {
 	return isTestCaseExists
 }
 
+func GetTestCase(testCaseUUID string) (*models.TestCaseFormatted, error) {
+	var selectResult models.TestCase
+	err := GetDB().Get(
+		&selectResult,
+		`SELECT
+			test_cases.id,
+			test_cases.uuid,
+			test_cases.name,
+			test_cases.status,
+			test_cases.created_at,
+			test_cases.pre_condition,
+			test_cases.post_condition,
+			test_cases.description,
+			test_cases.source_ref,
+			test_cases.test_case_group,
+			test_cases.creator as creator_uuid,
+			users.login AS creator
+		FROM test_cases
+		JOIN users ON test_cases.creator = users.uuid where test_cases.uuid = ?`,
+		testCaseUUID,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.TestCaseFormatted{
+		TestCase:      selectResult,
+		Status:        selectResult.Status.Name(),
+		Name:          selectResult.Name.String,
+		PreCondition:  selectResult.PreCondition.String,
+		PostCondition: selectResult.PostCondition.String,
+		Description:   selectResult.Description.String,
+		SourceRef:     selectResult.SourceRef.String,
+	}, nil
+}
+
 func GetTestCaseSteps(testCaseUUID string) *[]models.TestCaseStepFormatted {
 	var selectResult []models.TestCaseStep
 
@@ -217,6 +254,39 @@ func GetTestCaseSteps(testCaseUUID string) *[]models.TestCaseStepFormatted {
 	}
 
 	return &result
+}
+
+func SetTestCaseErrorStatus(uuidList *[]string) error {
+	dbInst := GetDB()
+	tx, err := dbInst.Beginx()
+	if err != nil {
+		return err
+	}
+
+	stmt, err := tx.Preparex(
+		`UPDATE test_cases SET status = ?
+		WHERE uuid = ?`,
+	)
+
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	defer stmt.Close()
+
+	for _, uuid := range *uuidList {
+		_, err := stmt.Exec(
+			models.StatusError,
+			uuid,
+		)
+
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit()
 }
 
 func UpdateTestCaseWithModelResponse(

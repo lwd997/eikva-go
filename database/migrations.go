@@ -50,4 +50,16 @@ func Migrate() {
 		FOREIGN KEY (creator) REFERENCES users(uuid),
 		FOREIGN KEY (test_case) REFERENCES test_cases(uuid) ON DELETE CASCADE
 	);`)
+
+	db.MustExec(`CREATE TABLE IF NOT EXISTS uploads (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		uuid TEXT UNIQUE NOT NULL,
+		name TEXT NOT NULL,
+		content TEXT NOT NULL,
+		token_count INTEGER NOT NULL,
+		creator TEXT NOT NULL,
+		test_case_group TEXT NOT NULL,
+		FOREIGN KEY (creator) REFERENCES users(uuid),
+		FOREIGN KEY (test_case_group) REFERENCES test_case_groups(uuid) ON DELETE CASCADE
+	);`)
 }

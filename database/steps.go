@@ -74,14 +74,38 @@ func CreateEmptyStep(testCaseUUID string, user *models.User) (*models.TestCaseSt
 		panic(err)
 	}
 
+	var inserted models.TestCaseStep
+	insErr := dbInst.Get(
+		&inserted,
+		`SELECT
+			test_case_steps.id,
+			test_case_steps.uuid,
+			test_case_steps.status,
+			test_case_steps.num,
+			test_case_steps.created_at,
+			test_case_steps.description,
+			test_case_steps.data,
+			test_case_steps.expected_result,
+			test_case_steps.test_case,
+			test_case_steps.creator as creator_uuid,
+			users.login AS creator
+		FROM test_case_steps
+		JOIN users ON test_case_steps.creator = users.uuid where test_case_steps.id = ? `,
+		id,
+	)
+
+	if insErr != nil {
+		return nil, insErr
+	}
+
 	step.ID = int(id)
 
 	formatted := &models.TestCaseStepFormatted{
-		TestCaseStep:   *step,
-		Status:         step.Status.Name(),
-		Data:           step.Data.String,
-		ExpectedResult: step.ExpectedResult.String,
-		Description:    step.Description.String,
+		TestCaseStep:   inserted,
+		Status:         inserted.Status.Name(),
+		Data:           inserted.Data.String,
+		ExpectedResult: inserted.ExpectedResult.String,
+		Description:    inserted.Description.String,
 	}
 
 	return formatted, nil

@@ -47,13 +47,13 @@ func GetCreateTestCaseFormat(amount int) map[string]any {
 	}
 }
 
-func StartTestCaseListGeneration(uuidList *[]string, user *models.User) (*[]*models.CreateTestCaseOutputEntry, error) {
+func StartTestCaseListGeneration(lenght int, input *string) (*[]*models.CreateTestCaseOutputEntry, error) {
 	completionsUrl := envvars.Get(envvars.OpenAiBaseUrl) + envvars.Get(envvars.OpenAiCompletionsPathName)
 	reqBody := models.OpenAiRequest{
 		Model:  "qwen3:latest",
 		Stream: false,
 		Think:  false,
-		Format: GetCreateTestCaseFormat(len(*uuidList)),
+		Format: GetCreateTestCaseFormat(lenght),
 		Messages: []models.ModelMessage{
 			{
 				Role:    "system",
@@ -61,7 +61,7 @@ func StartTestCaseListGeneration(uuidList *[]string, user *models.User) (*[]*mod
 			},
 			{
 				Role:    "user",
-				Content: "",
+				Content: prompts.CreateTestCaseUserMessageTemplate(*input),
 			},
 		},
 	}
@@ -70,7 +70,6 @@ func StartTestCaseListGeneration(uuidList *[]string, user *models.User) (*[]*mod
 	err := requests.Post(completionsUrl, reqBody, &response)
 
 	if err != nil {
-		fmt.Printf("tmp error (handle error ws notify + status db sasus update)\n", response, err)
 		return nil, err
 	}
 
