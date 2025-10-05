@@ -2,7 +2,6 @@ package ai
 
 import (
 	"encoding/json"
-	"fmt"
 	"eikva.ru/eikva/ai/prompts"
 	envvars "eikva.ru/eikva/env_vars"
 	"eikva.ru/eikva/models"
