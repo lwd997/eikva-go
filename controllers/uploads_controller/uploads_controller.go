@@ -46,7 +46,7 @@ func GetSingleUpload(ctx *gin.Context) {
 	})
 }
 
-type CompressUploadPayload struct {
+type UploadActionPayload struct {
 	UUID string `json:"uuid" validate:"required,uuid"`
 }
 
@@ -56,7 +56,7 @@ func CompressUpload(ctx *gin.Context) {
 		return
 	}
 
-	var payload CompressUploadPayload
+	var payload UploadActionPayload
 	if !tools.HandleRequestBodyParsing(ctx, &payload) {
 		return
 	}
@@ -100,6 +100,33 @@ func CompressUpload(ctx *gin.Context) {
 
 		ws.WSConntections.BroadCastUploadUpdate(upload.UUID)
 	}()
+
+	ctx.JSON(http.StatusOK, &models.ServerBlankOk{Ok: true})
+}
+
+func DeleteUpload(ctx *gin.Context) {
+	user, err := tools.GetUserFromRequestCtx(ctx)
+	if err != nil {
+		return
+	}
+
+	var payload UploadActionPayload
+	if !tools.HandleRequestBodyParsing(ctx, &payload) {
+		return
+	}
+
+	if !tools.HadleRequestBodyValidation(ctx, &payload) {
+		return
+	}
+
+	deleteErr := database.DeleteUpload(payload.UUID, user)
+	if deleteErr != nil {
+		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
+			Error: deleteErr.Error(),
+		})
+
+		return
+	}
 
 	ctx.JSON(http.StatusOK, &models.ServerBlankOk{Ok: true})
 }

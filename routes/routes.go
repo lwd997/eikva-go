@@ -49,6 +49,7 @@ func InitRoutes(router *gin.Engine) {
 	{
 		uploads.GET("/:uuid", uploadscontroller.GetSingleUpload)
 		uploads.POST("/compress", uploadscontroller.CompressUpload)
+		uploads.POST("/delete", uploadscontroller.DeleteUpload)
 	}
 
 

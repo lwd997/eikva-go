@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
+	"path"
 
 	"eikva.ru/eikva/database"
 	"eikva.ru/eikva/models"
@@ -215,13 +215,50 @@ func UploadFiles(ctx *gin.Context) {
 
 		defer f.Close()
 
-		content, err := io.ReadAll(f)
-		if err != nil {
-			fileList = append(fileList, nil)
-			break
+		fType := path.Ext(file.Filename)
+		var c string
+
+		f, fOpenErr := file.Open()
+		if fOpenErr != nil {
+			ctx.JSON(http.StatusInternalServerError, &models.ServerErrorResponse{
+				Error: err.Error(),
+			})
+			return
+		}
+		defer f.Close()
+
+		contentBytes := new(bytes.Buffer)
+		if _, err := contentBytes.ReadFrom(f); err != nil {
+			ctx.JSON(http.StatusInternalServerError, &models.ServerErrorResponse{
+				Error: err.Error(),
+			})
+			return
 		}
 
-		c := string(content)
+		if fType == ".xlsx" {
+			xlFile, err := excelize.OpenReader(bytes.NewReader(contentBytes.Bytes()))
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, &models.ServerErrorResponse{
+					Error: err.Error(),
+				})
+				return
+			}
+
+			defer xlFile.Close()
+			c = tools.XlsxToMD(xlFile)
+		} else if fType == ".docx" {
+			reader, err := tools.GetDocumentXmlReader(contentBytes.Bytes())
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, &models.ServerErrorResponse{
+					Error: err.Error(),
+				})
+				return
+			}
+
+			c = tools.GetAllXmlText(reader)
+		} else {
+			c = string(contentBytes.Bytes())
+		}
 
 		fileList = append(fileList, &models.File{
 			Name:          file.Filename,
