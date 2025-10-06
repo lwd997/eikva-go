@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -64,8 +65,10 @@ func (tcgs Status) Name() string {
 		return "none"
 	case StatusLoading:
 		return "loading"
+	case StatusError:
+		return "error"
 	default:
-		return string(tcgs)
+		return fmt.Sprintf("%d", tcgs)
 	}
 }
 
@@ -154,21 +157,25 @@ type OpenAiRequest struct {
 	Messages []ModelMessage `json:"messages"`
 	Stream   bool           `json:"stream"`
 	Think    bool           `json:"think"`
-	Format   any            `json:"format"`
+	Format   any            `json:"response_format"`
+}
+
+type Choice struct {
+	Message ModelMessage `json:"message"`
 }
 
 type ModelReponse struct {
-	Model              string       `json:"model"`
-	CreatedAt          string       `json:"created_at"`
-	Message            ModelMessage `json:"message"`
-	Done               bool         `json:"done"`
-	DoneReason         string       `json:"done_reason"`
-	TotalDuration      int          `json:"total_duration"`
-	LoadDuration       int          `json:"load_duration"`
-	PromptEvalCount    int          `json:"prompt_eval_count"`
-	PromptEvalDuration int          `json:"prompt_eval_duration"`
-	EvalCount          int          `json:"eval_count"`
-	EvalDuration       int          `json:"eval_duration"`
+	Model              string   `json:"model"`
+	CreatedAt          string   `json:"created_at"`
+	Choices            []Choice `json:"choices"`
+	Done               bool     `json:"done"`
+	DoneReason         string   `json:"done_reason"`
+	TotalDuration      int      `json:"total_duration"`
+	LoadDuration       int      `json:"load_duration"`
+	PromptEvalCount    int      `json:"prompt_eval_count"`
+	PromptEvalDuration int      `json:"prompt_eval_duration"`
+	EvalCount          int      `json:"eval_count"`
+	EvalDuration       int      `json:"eval_duration"`
 }
 
 type ModelMessageContent struct {

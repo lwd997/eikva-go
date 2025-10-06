@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"eikva.ru/eikva/ai"
 	"eikva.ru/eikva/database"
@@ -103,11 +104,9 @@ func StartTestCasesGeneration(ctx *gin.Context) {
 
 	payloadFilesLen := len(payload.Files)
 
-	fmt.Printf("%+v\n", payload)
-
 	if payload.UserInput == "" && payloadFilesLen < 1 {
 		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
-			Error: "Необходимо преложить файлы или ввести текст",
+			Error: "Необходимо прикрепить файлы или ввести текст",
 		})
 
 		return
@@ -122,7 +121,9 @@ func StartTestCasesGeneration(ctx *gin.Context) {
 		return
 	}
 
-	payload.UserInput = "[Пользователь]\n" + payload.UserInput
+	if strings.Trim(payload.UserInput, " ") != "" {
+		payload.UserInput = "\n[Пользователь]\n" + payload.UserInput
+	}
 
 	tokenCount := tools.CountTokens(payload.UserInput)
 	tokenCountTreshold := 20000
@@ -140,7 +141,7 @@ func StartTestCasesGeneration(ctx *gin.Context) {
 					return
 				}
 
-				payload.UserInput += fmt.Sprintf("[%s]\n%s", f.Name, f.Content)
+				payload.UserInput += fmt.Sprintf("\n[%s]\n%s", f.Name, f.Content)
 			}
 		}
 	}
@@ -149,6 +150,7 @@ func StartTestCasesGeneration(ctx *gin.Context) {
 		generated, err := ai.StartTestCaseListGeneration(len(*result.UUIDList), &payload.UserInput)
 		if err != nil {
 			database.SetTestCaseErrorStatus(result.UUIDList)
+			fmt.Printf("err = %+v", err)
 		} else {
 			database.UpdateTestCaseWithModelResponse(result.UUIDList, *generated, user)
 		}

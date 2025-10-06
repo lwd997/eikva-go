@@ -32,5 +32,5 @@ type ExportTestCaseStepFormatted struct {
 
 type ExportTestCaseWithSteps struct {
 	ExportTestCaseFormatted `json:",inline"`
-	Steps                       []ExportTestCaseStepFormatted `json:"steps"`
+	Steps                   []ExportTestCaseStepFormatted `json:"steps"`
 }

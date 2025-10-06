@@ -22,6 +22,7 @@ type WSMessageType string
 
 const (
 	WSMessageTypeTestCaseUpdate WSMessageType = "test-case-update"
+	WSMessageUploadUpdate       WSMessageType = "upload-update"
 	WSMessageTypeAuth           WSMessageType = "auth"
 )
 
@@ -67,6 +68,16 @@ func (cm *ConntectionManager) BroadCastTestCaseUpdate(uuid ...string) {
 	}
 }
 
+func (cm *ConntectionManager) BroadCastUploadUpdate(uuid ...string) {
+	cm.mu.Lock()
+	defer cm.mu.Unlock()
+	for c := range cm.conntections {
+		c.WriteJSON(&WSUpdateNotification{
+			Type: WSMessageUploadUpdate,
+			UUID: uuid,
+		})
+	}
+}
 func NewConnectionManager() *ConntectionManager {
 	return &ConntectionManager{
 		conntections: make(map[*websocket.Conn]ConnectionInfo),

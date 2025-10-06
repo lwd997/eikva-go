@@ -216,8 +216,8 @@ func SaveFiles(fileList []*models.File) error {
 	}
 
 	stmt, err := tx.Preparex(
-		`INSERT INTO uploads (uuid, name, content, token_count, creator, test_case_group)
-        VALUES (?, ?, ?, ?, ?, ?)`,
+		`INSERT INTO uploads (uuid, name, content, token_count, creator, test_case_group, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
 	)
 
 	if err != nil {
@@ -234,6 +234,7 @@ func SaveFiles(fileList []*models.File) error {
 			file.TokenCount,
 			file.CreatorUUID,
 			file.TestCaseGroup,
+			file.Status,
 		)
 
 		if err != nil {
@@ -245,15 +246,16 @@ func SaveFiles(fileList []*models.File) error {
 	return tx.Commit()
 }
 
-func GetGroupFiles(testCaseGroupUUID string) (*[]*models.File, error) {
-	var result []*models.File
+func GetGroupFiles(testCaseGroupUUID string) (*[]*models.FileFormatted, error) {
+	var selectRes []*models.File
 	err := GetDB().Select(
-		&result,
+		&selectRes,
 		`SELECT
 			id,
 			uuid,
 			name,
 			token_count,
+			status,
 			creator as creator
 		FROM uploads
 		WHERE test_case_group = ?`,
@@ -264,8 +266,17 @@ func GetGroupFiles(testCaseGroupUUID string) (*[]*models.File, error) {
 		return nil, err
 	}
 
-	if result == nil {
-		result = []*models.File{}
+	if selectRes == nil {
+		return &[]*models.FileFormatted{}, nil
+	}
+
+	result := make([]*models.FileFormatted, len(selectRes))
+
+	for i, f := range selectRes {
+		result[i] = &models.FileFormatted{
+			File: *f,
+			Status: f.Status.Name(),
+		}
 	}
 
 	return &result, nil
@@ -281,6 +292,7 @@ func GetFile(uuid string) (*models.File, error) {
 			name,
 			content,
 			token_count,
+			status,
 			creator as creator
 		FROM uploads
 		WHERE uuid = ?`,

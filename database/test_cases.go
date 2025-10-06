@@ -272,6 +272,7 @@ func SetTestCaseErrorStatus(uuidList *[]string) error {
 		tx.Rollback()
 		return err
 	}
+
 	defer stmt.Close()
 
 	for _, uuid := range *uuidList {

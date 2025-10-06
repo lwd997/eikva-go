@@ -54,6 +54,7 @@ func Migrate() {
 	db.MustExec(`CREATE TABLE IF NOT EXISTS uploads (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		uuid TEXT UNIQUE NOT NULL,
+		status INTEGER NOT NULL,
 		name TEXT NOT NULL,
 		content TEXT NOT NULL,
 		token_count INTEGER NOT NULL,

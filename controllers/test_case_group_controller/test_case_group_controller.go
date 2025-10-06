@@ -171,7 +171,7 @@ func UpdateTestCaseName(ctx *gin.Context) {
 }
 
 type FilesResponse struct {
-	Files []*models.File `json:"files"`
+	Files []*models.FileFormatted `json:"files"`
 }
 
 func UploadFiles(ctx *gin.Context) {
@@ -230,6 +230,7 @@ func UploadFiles(ctx *gin.Context) {
 			CreatorUUID:   user.UUID,
 			UUID:          uuid.New().String(),
 			TokenCount:    tools.CountTokens(c),
+			Status:        models.StatusNone,
 		})
 	}
 
@@ -241,8 +242,17 @@ func UploadFiles(ctx *gin.Context) {
 		return
 	}
 
+	fileListResult := make([]*models.FileFormatted, len(fileList))
+
+	for i, f := range fileList {
+		fileListResult[i] = &models.FileFormatted{
+			File:   *f,
+			Status: f.Status.Name(),
+		}
+	}
+
 	ctx.JSON(http.StatusOK, &FilesResponse{
-		Files: fileList,
+		Files: fileListResult,
 	})
 }
 
@@ -273,7 +283,7 @@ func GetGroupUploads(ctx *gin.Context) {
 	files, err := database.GetGroupFiles(payload.GroupUUID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			ctx.JSON(http.StatusOK, &FilesResponse{Files: []*models.File{}})
+			ctx.JSON(http.StatusOK, &FilesResponse{Files: []*models.FileFormatted{}})
 		} else {
 			ctx.JSON(http.StatusInternalServerError, &models.ServerErrorResponse{
 				Error: err.Error(),

@@ -11,6 +11,7 @@ import (
 type EnvVar string
 
 const (
+	NoSSLVerify               EnvVar = "NO_SSL_VERIFY"
 	JwtSectet                 EnvVar = "JWT_SECRET"
 	OpenAiApiKey              EnvVar = "OPEN_AI_API_KEY"
 	OpenAiBaseUrl             EnvVar = "OPEN_AI_BASE_URL"
@@ -21,6 +22,7 @@ var pool map[EnvVar]string = map[EnvVar]string{}
 
 func Init() {
 	varNames := []EnvVar{
+		NoSSLVerify,
 		JwtSectet,
 		OpenAiApiKey,
 		OpenAiBaseUrl,
@@ -46,7 +48,7 @@ func Get(name EnvVar) string {
 	return pool[name]
 }
 
-func Dotenv () {
+func Dotenv() {
 	err := godotenv.Load()
 
 	if err != nil {

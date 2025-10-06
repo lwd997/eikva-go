@@ -48,6 +48,7 @@ func InitRoutes(router *gin.Engine) {
 	uploads := protected.Group("/uploads")
 	{
 		uploads.GET("/:uuid", uploadscontroller.GetSingleUpload)
+		uploads.POST("/compress", uploadscontroller.CompressUpload)
 	}
 
 
