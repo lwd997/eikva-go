@@ -6,6 +6,7 @@ import (
 
 	"eikva.ru/eikva/ai"
 	"eikva.ru/eikva/database"
+	envvars "eikva.ru/eikva/env_vars"
 	"eikva.ru/eikva/models"
 	"eikva.ru/eikva/tools"
 	"eikva.ru/eikva/ws"
@@ -75,7 +76,7 @@ func CompressUpload(ctx *gin.Context) {
 	}
 
 	tokenCount := tools.CountTokens(upload.Content)
-	tokenCountTreshold := 20000
+	tokenCountTreshold := envvars.GetNumeric(envvars.LLMTokenTreshold)
 
 	if tokenCount >= tokenCountTreshold {
 		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{

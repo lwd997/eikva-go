@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"net/http"
+
 	authcontroller "eikva.ru/eikva/controllers/auth_controller"
 	testcasecontroller "eikva.ru/eikva/controllers/test_case_controller"
 	testcasegroupcontroller "eikva.ru/eikva/controllers/test_case_group_controller"
@@ -13,7 +15,6 @@ import (
 
 func InitRoutes(router *gin.Engine) {
 	router.SetTrustedProxies([]string{"127.0.0.1", "::1"})
-	router.Static("/static", "./test_client")
 	router.GET("/ws", ws.HandleSubscribers)
 
 	auth := router.Group("/auth")
@@ -70,4 +71,15 @@ func InitRoutes(router *gin.Engine) {
 		steps.POST("/delete", testcasestepscontroller.DeleteStep)
 		steps.POST("/swap", testcasestepscontroller.SwapSteps)
 	}
+
+
+
+	router.LoadHTMLFiles("static/index.html")
+	router.NoRoute(func(ctx *gin.Context) {
+		ctx.HTML(http.StatusOK, "index.html", nil)
+	})
+
+	router.Static("/assets", "static/assets")
+	router.Static("/fonts", "static/fonts")
+	router.Static("/media", "static/media")
 }

@@ -9,6 +9,7 @@ import (
 
 	"eikva.ru/eikva/ai"
 	"eikva.ru/eikva/database"
+	envvars "eikva.ru/eikva/env_vars"
 	"eikva.ru/eikva/models"
 	"eikva.ru/eikva/tools"
 	"eikva.ru/eikva/ws"
@@ -112,21 +113,12 @@ func StartTestCasesGeneration(ctx *gin.Context) {
 		return
 	}
 
-	result, err := database.InitTestCasesGeneration(payload.TestCaseGroup, payload.Amount, user)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
-			Error: err.Error(),
-		})
-
-		return
-	}
-
 	if strings.Trim(payload.UserInput, " ") != "" {
 		payload.UserInput = "\n[Пользователь]\n" + payload.UserInput
 	}
 
 	tokenCount := tools.CountTokens(payload.UserInput)
-	tokenCountTreshold := 20000
+	tokenCountTreshold := envvars.GetNumeric(envvars.LLMTokenTreshold)
 
 	if payloadFilesLen > 0 {
 		for _, uuid := range payload.Files {
@@ -144,6 +136,15 @@ func StartTestCasesGeneration(ctx *gin.Context) {
 				payload.UserInput += fmt.Sprintf("\n[%s]\n%s", f.Name, f.Content)
 			}
 		}
+	}
+
+	result, err := database.InitTestCasesGeneration(payload.TestCaseGroup, payload.Amount, user)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
+			Error: err.Error(),
+		})
+
+		return
 	}
 
 	go func() {

@@ -13,3 +13,4 @@ func CountTokens(input string) int {
 	tokens := enc.Encode(input, nil, nil)
 	return len(tokens)
 }
+

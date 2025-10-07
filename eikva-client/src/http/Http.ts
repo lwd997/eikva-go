@@ -86,7 +86,6 @@ export class Http {
                     throw new Error("Refresh failed");
                 }
             } catch (err) {
-                console.error("Token refresh failed:", err);
                 this.deleteTokens();
                 this.onUpdateTokenFail?.(this);
                 throw err;
@@ -99,10 +98,7 @@ export class Http {
         await this.refreshPromise;
     }
 
-    async request<T extends object>(
-        path: string,
-        options: HttpRequestInit = {}
-    ): Promise<HttpResponse<T>> {
+    async request<T extends object>(path: string, options: HttpRequestInit = {}): Promise<HttpResponse<T>> {
         if (!options.headers) {
             options.headers = {};
         }
@@ -161,5 +157,4 @@ export class Http {
         };
     }
 }
-
 

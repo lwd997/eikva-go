@@ -15,9 +15,14 @@ export const Group = () => {
     const [testCaseList, setTestCaseList] = useState<TestCase[]>([]);
 
     useWebsocketUpdate((type, updateList) => {
-        window.dispatchEvent(new CustomEvent(type, {
-            detail: updateList
-        }));
+        // При моментальной ошибке обращения к модели
+        // тест-кейсы не успевают замаунтиться.
+        // А мы не успеваем решить эту проблему как-то по-другому :D
+        setTimeout(() => {
+            window.dispatchEvent(new CustomEvent(type, {
+                detail: updateList
+            }));
+        }, 100);
     });
 
     const getTestCases = async () => {

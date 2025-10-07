@@ -58,6 +58,7 @@
 }
 
 .fc .file div {
+    white-space: pre;
     max-width: 300px;
     overflow: hidden;
     text-overflow: ellipsis;

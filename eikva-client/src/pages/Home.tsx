@@ -5,7 +5,7 @@ export const Home = () => {
         <div className="card group height-100 width-100 display-flex justify-content-center align-items-center">
             <div className="width-50">
                 <div className="logo">
-                    <img src="/TestCraft.svg" />
+                    <img src="/media/TestCraft.svg" />
                 </div>
 
                 <h2>Начало работы</h2>

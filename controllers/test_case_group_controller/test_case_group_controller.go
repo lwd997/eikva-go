@@ -358,6 +358,14 @@ func ExportExcel(ctx *gin.Context) {
 		return
 	}
 
+	if len(content) < 1 {
+		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
+			Error: "В данной группе нет тест-кейсов, доступных для экспорта",
+		})
+
+		return
+	}
+
 	xlsx := excelize.NewFile()
 	sheet := "Sheet1"
 
@@ -452,6 +460,14 @@ func ExportZephyr(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, &models.ServerErrorResponse{
 			Error: err.Error(),
+		})
+
+		return
+	}
+
+	if len(content) < 1 {
+		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
+			Error: "В данной группе нет тест-кейсов, доступных для экспорта",
 		})
 
 		return

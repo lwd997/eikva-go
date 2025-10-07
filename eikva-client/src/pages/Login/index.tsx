@@ -51,7 +51,7 @@ export const Login = () => {
         <form onSubmit={handleSubmit} className="display-flex width-100 height-100 align-items-center justify-content-center">
             <div className="login-form card display-flex flex-direction-column">
                 <div className="logo">
-                    <img src="/TestCraft.svg" />
+                    <img src="/media/TestCraft.svg" />
                 </div>
                 <label htmlFor="login">Логин</label>
                 <input

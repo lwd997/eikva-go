@@ -5,7 +5,6 @@ import { SingleStep } from "./SingleStep";
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { http } from "../../../http";
-
 import "./Steps.css";
 
 interface StepsProps {

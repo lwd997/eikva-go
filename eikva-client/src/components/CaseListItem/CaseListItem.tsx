@@ -38,7 +38,6 @@ export const CaseListItem = ({ userUUID, onDelete, ...testCase }: CaseListItemPr
 
     const getSelf = async () => {
         if (isExpanded || isStepsLoaded) {
-            console.log("??")
             getSteps();
         }
 
