@@ -1,0 +1,20 @@
+@font-face {
+    font-family: "material-icons";
+    font-style: normal;
+    font-weight: 400;
+    src: url("MaterialIcons-Regular.ttf") format("truetype");
+}
+
+.icon {
+    font-family: "material-icons";
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 20px;
+    font-variation-settings:
+        "FILL" 0,
+        "wght" 400,
+        "GRAD" 0,
+        "opsz" 24;
+}

@@ -1,0 +1,120 @@
+.input-area {
+    width: 1100px;
+    z-index: 4;
+}
+
+.input-area .textarea {
+    flex: 1 1 auto;
+}
+
+.show-input-area-container {
+    position: relative;
+    width: 1100px;
+    height: 0;
+    margin-top: 2rem;
+}
+
+.show-input-area-button {
+    position: absolute;
+    animation: 0.2s cool-disappearance forwards;
+}
+
+.hide-input-area-button {
+    position: relative;
+    animation: 0.2s cool-appearance forwards;
+}
+
+.input-area-dropzone {
+    flex: 1 1 auto;
+    height: 100%;
+    border: 1px dashed;
+    border-radius: var(--button-border-radius);
+    cursor: pointer;
+}
+
+.filezone {
+    height: 400px;
+    width: 100%;
+    padding: 0.25rem;
+}
+
+.file {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--card-bg-color);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.5rem;
+    height: 2rem;
+}
+
+.fc {
+    padding-left: 0;
+}
+
+.fc.selected  .file {
+    color: var(--teal);
+}
+
+.fc .file div {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file .icon,
+.file .file {
+    cursor: pointer;
+}
+
+.file-side {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+
+.file-panel {
+    padding: 3px;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    min-height: 2rem;
+    max-height: 100%;
+}
+
+.selected-files {
+    max-width: 630px;
+    padding: 3px;
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+}
+
+.preview {
+    white-space: pre-wrap;
+    width: 800px;
+    flex: 0 0 auto;
+    max-width: 50%;
+    overflow: auto;
+}
+
+@keyframes cool-disappearance {
+    from {
+        top: -10px;
+    }
+    to {
+        top: -32px;
+    }
+}
+
+
+@keyframes cool-appearance {
+    from {
+        top: -20px;
+    }
+    to {
+        top: 0;
+    }
+}

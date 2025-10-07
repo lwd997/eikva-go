@@ -75,8 +75,6 @@ func StartTestCaseListGeneration(lenght int, input *string) (*[]*models.CreateTe
 	}
 
 	var response models.ModelReponse
-	fmt.Printf("%s\n", completionsUrl)
-	fmt.Printf("UP = %+v\n", reqBody.Messages)
 
 	err := requests.Post(&requests.PostConfig{
 		Url: completionsUrl,
@@ -89,7 +87,6 @@ func StartTestCaseListGeneration(lenght int, input *string) (*[]*models.CreateTe
 	})
 
 	if err != nil {
-		fmt.Printf("%s\n", err.Error())
 		return nil, err
 	}
 
@@ -97,15 +94,10 @@ func StartTestCaseListGeneration(lenght int, input *string) (*[]*models.CreateTe
 		return nil, errors.New("Не верный формат ответа модели")
 	}
 
-	fmt.Println("starting Unmarshal content")
-	fmt.Printf("content: %+v\n", response.Choices[0].Message)
-	fmt.Printf("resoinse: %+v\n", response)
 	var generated models.ModelMessageContent
 	if err := json.Unmarshal([]byte(response.Choices[0].Message.Content), &generated); err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("&generated.Result %+v\n", &generated.Result)
 
 	return &generated.Result, nil
 }
@@ -129,8 +121,6 @@ func StartTextCompression(content *string) (*string, error) {
 	}
 
 	var response models.ModelReponse
-	fmt.Printf("%s\n", completionsUrl)
-	fmt.Printf("UP = %+v\n", reqBody.Messages)
 
 	err := requests.Post(&requests.PostConfig{
 		Url: completionsUrl,
@@ -143,16 +133,12 @@ func StartTextCompression(content *string) (*string, error) {
 	})
 
 	if err != nil {
-		fmt.Printf("%s\n", err.Error())
 		return nil, err
 	}
 
 	if len(response.Choices) != 1 {
 		return nil, errors.New("Не верный формат ответа модели")
 	}
-
-	fmt.Println("starting Unmarshal content")
-	fmt.Printf("content: %+v\n", response.Choices[0].Message)
 
 	return &response.Choices[0].Message.Content, nil
 }

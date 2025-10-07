@@ -8,9 +8,10 @@ import (
 	"eikva.ru/eikva/tools"
 )
 
-func CreateEmptyTestCase(groupUUID string, status models.Status, user *models.User) (*models.TestCaseFormatted, error) {
+func CreateEmptyTestCase(groupUUID string, name string, status models.Status, user *models.User) (*models.TestCaseFormatted, error) {
 	tc := &models.TestCase{
 		Status:        status,
+		Name:          tools.MakeSqlNullString(name),
 		CreatorUUID:   user.UUID,
 		Creator:       user.Login,
 		TestCaseGroup: groupUUID,
@@ -21,10 +22,10 @@ func CreateEmptyTestCase(groupUUID string, status models.Status, user *models.Us
 
 	res, err := dbInst.Exec(
 		`INSERT INTO test_cases
-			(uuid, status, creator, test_case_group)
+			(uuid, status, creator, test_case_group, name)
 		VALUES
-			(?, ?, ?, ?)`,
-		tc.UUID, tc.Status, tc.CreatorUUID, tc.TestCaseGroup,
+			(?, ?, ?, ?, ?)`,
+		tc.UUID, tc.Status, tc.CreatorUUID, tc.TestCaseGroup, tc.Name,
 	)
 
 	if err != nil {
@@ -84,7 +85,7 @@ func InitTestCasesGeneration(groupUUID string, amount int, user *models.User) (*
 	uuidList := []string{}
 
 	for i := 0; i < amount; i++ {
-		tc, err := CreateEmptyTestCase(groupUUID, models.StatusLoading, user)
+		tc, err := CreateEmptyTestCase(groupUUID, "", models.StatusLoading, user)
 		if err != nil {
 			return nil, err
 		}

@@ -1,0 +1,124 @@
+.preload-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: hsl(0deg 0% 0% / 80%);
+    z-index: 10;
+}
+
+.spinner-loader {
+    animation: rotate 1s infinite;
+    height: 50px;
+    width: 50px;
+}
+
+.spinner-loader:before,
+.spinner-loader:after {
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 20px;
+    width: 20px;
+}
+.spinner-loader:before {
+    animation: ball1 1s infinite;
+    background-color: hsl(0deg 0% 57.05%);
+    box-shadow: 30px 0 0 hsl(0deg 0% 42.81%);
+    margin-bottom: 10px;
+}
+.spinner-loader:after {
+    animation: ball2 1s infinite;
+    background-color: hsl(0deg 0% 42.81%);
+    box-shadow: 30px 0 0 hsl(0deg 0% 57.05%);
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg) scale(0.8);
+    }
+    50% {
+        transform: rotate(360deg) scale(1.2);
+    }
+    100% {
+        transform: rotate(720deg) scale(0.8);
+    }
+}
+
+@keyframes ball1 {
+    0% {
+        box-shadow: 30px 0 0 hsl(0deg 0% 42.81%);
+    }
+    50% {
+        box-shadow: 0 0 0 hsl(0deg 0% 42.81%);
+        margin-bottom: 0;
+        transform: translate(15px, 15px);
+    }
+    100% {
+        box-shadow: 30px 0 0 hsl(0deg 0% 42.81%);
+        margin-bottom: 10px;
+    }
+}
+
+@keyframes ball2 {
+    0% {
+        box-shadow: 30px 0 0 hsl(0deg 0% 57.05%);
+    }
+    50% {
+        box-shadow: 0 0 0 hsl(0deg 0% 57.05%);
+        margin-top: -20px;
+        transform: translate(15px, 15px);
+    }
+    100% {
+        box-shadow: 30px 0 0 hsl(0deg 0% 57.05%);
+        margin-top: 0;
+    }
+}
+
+.dots-loader,
+.dots-loader:before,
+.dots-loader:after {
+    border-radius: 50%;
+    width: 1em;
+    height: 1em;
+    animation-fill-mode: both;
+    animation: bblFadInOut 1.8s infinite ease-in-out;
+    top: -1rem;
+}
+
+.dots-loader {
+    color: hsl(0deg 0% 57.05%);;
+    font-size: 7px;
+    position: relative;
+    text-indent: -9999em;
+    transform: translateZ(0);
+    animation-delay: -0.16s;
+}
+
+.dots-loader:before,
+.dots-loader:after {
+    content: "";
+    position: absolute;
+    top: 0;
+}
+
+.dots-loader:before {
+    left: -3.5em;
+    animation-delay: -0.32s;
+}
+
+.dots-loader:after {
+    left: 3.5em;
+}
+
+@keyframes bblFadInOut {
+    0%,
+    80%,
+    100% {
+        box-shadow: 0 2.5em 0 -1.3em;
+    }
+    40% {
+        box-shadow: 0 2.5em 0 0;
+    }
+}

@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -27,8 +26,6 @@ func Post(config *PostConfig) error {
 
 	client := &http.Client{}
 	noSSL := envvars.Get(envvars.NoSSLVerify) == "1"
-	fmt.Printf("no ssl = %+v\n", noSSL)
-	fmt.Printf("var env = %+v\n", envvars.Get(envvars.NoSSLVerify))
 
 	if noSSL {
 		client.Transport = &http.Transport{
@@ -63,15 +60,9 @@ func Post(config *PostConfig) error {
 		return err
 	}
 
-	fmt.Printf("%s\n", string(body))
-
-	fmt.Println("starting Unmarshal response")
 	if err := json.Unmarshal(body, &config.RespBody); err != nil {
 		return err
 	}
-
-
-	fmt.Printf("___&config.RespBody %+v\n", &config.RespBody)
 
 	return nil
 }

@@ -1,0 +1,95 @@
+.button {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    font-family: var(--button-font-family);
+    font-size: var(--button-font-size, var(--font-size, 1rem));
+    font-weight: var(--button-font-weight);
+    text-decoration: none;
+    text-align: center;
+    vertical-align: middle;
+    background-color: var(--button-bg-color);
+    color: var(--button-color);
+    border-color: var(--button-border-color);
+    padding: 0 0.5rem;
+    border-radius: var(--button-border-radius, var(--border-radius));
+    border-width: var(--button-border-width, var(--border-width, 0.0625rem));
+    border-style: var(--button-border-style, var(--border-style, solid));
+    height: 32px;
+
+    &:hover {
+        background-color: var(--button-hover-background-color, hsl(0, 0%, 85%));
+    }
+
+    &:active {
+        background-color: var(
+            --button-active-background-color,
+            hsl(0, 0%, 75%)
+        );
+    }
+}
+
+
+.button-square {
+    display: flex;
+    justify-content: center;
+    padding-left: calc(
+        var(--button-padding-y, var(--padding, 0.375em)) -
+            var(--button-border-width, var(--border-width, 0.0625rem))
+    );
+    padding-right: calc(
+        var(--button-padding-y, var(--padding, 0.375em)) -
+            var(--button-border-width, var(--border-width, 0.0625rem))
+    );
+    width: calc(
+        var(--button-font-size, var(--font-size, 1em)) *
+            var(--button-line-height, var(--line-height, 1.5)) +
+            var(--button-padding-y, var(--padding, 0.375em)) * 2
+    );
+}
+
+.button-small {
+    height: 30px;
+    font-size: calc(var(--button-font-size, var(--font-size, 1rem)) * 3 / 4);
+}
+
+.button-large {
+    font-size: calc(var(--button-font-size, var(--font-size, 1rem)) * 44 / 36);
+}
+
+.button-small.button-square {
+    --button-padding-y: 0.3125rem;
+    padding-left: calc(
+        var(
+                (--button-padding-y, var(--padding, 0.375em)) -
+                    var(--button-border-width, var(--border-width, 0.0625rem))
+            ) *
+            28 / 36
+    );
+    padding-right: calc(
+        (
+            var(--button-padding-y, var(--padding, 0.375em)) -
+                var(--button-border-width, var(--border-width, 0.0625rem)) *
+                28 / 36
+        )
+    );
+    width: calc(
+        var(--button-font-size, var(--font-size, 1em)) *
+            var(--button-line-height, var(--line-height, 1.5)) * 3 / 4 +
+            var(--button-padding-y, var(--padding, 0.375em)) * 2 +
+            var(--button-border-width, var(--border-width, 0.0625rem)) * 2
+    );
+}
+
+.button.text {
+    background: none;
+    color: var(--button-bg-color);
+    border: none;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.button.text:hover {
+    background: none;
+}

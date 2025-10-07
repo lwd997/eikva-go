@@ -1,0 +1,10 @@
+.login-form {
+    width: 500px;
+    background: var(--card-bg-color);
+    padding: var(--padding-bigger);
+    border-radius: var(--card-border-radius);
+}
+
+.login-form input {
+    margin-bottom: 1rem;
+}

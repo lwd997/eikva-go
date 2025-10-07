@@ -1,0 +1,76 @@
+@font-face {
+  font-family: "material-icons";
+  font-style: normal;
+  font-weight: 400;
+  src: url("MaterialIcons-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "roboto";
+  font-style: normal;
+  font-weight: 400;
+  src: url("Roboto-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "roboto";
+  font-style: normal;
+  font-weight: 700;
+  src: url("Roboto-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "open-sans";
+  font-style: normal;
+  font-weight: 400;
+  src: url("OpenSans-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "open-sans";
+  font-style: normal;
+  font-weight: 700;
+  src: url("OpenSans-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "inter";
+  font-style: normal;
+  font-weight: 400;
+  src: url("Inter_18pt-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "inter";
+  font-style: normal;
+  font-weight: 700;
+  src: url("Inter_18pt-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "proxima-nova";
+  font-style: normal;
+  font-weight: 400;
+  src: url("ProximaNova-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "proxima-nova";
+  font-style: normal;
+  font-weight: 700;
+  src: url("ProximaNova-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "nunito";
+  font-style: normal;
+  font-weight: 400;
+  src: url("Nunito-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "nunito";
+  font-style: normal;
+  font-weight: 700;
+  src: url("Nunito-Bold.ttf") format("truetype");
+}

@@ -1,0 +1,22 @@
+.badge {
+    display: flex;
+    white-space: nowrap;
+    color: var(--color);
+    opacity: 0.8;
+}
+
+.badge-value, .badge-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.badge-label {
+    padding-right: 0.25rem;
+    border-right: 1px solid var(--color);
+}
+
+.badge-value {
+    padding-left: 0.25rem;
+}

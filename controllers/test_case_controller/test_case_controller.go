@@ -34,7 +34,7 @@ func CreateTestCase(ctx *gin.Context) {
 		return
 	}
 
-	tc, err := database.CreateEmptyTestCase(payload.TestCaseGroup, models.StatusNone, user)
+	tc, err := database.CreateEmptyTestCase(payload.TestCaseGroup, "Новый тест-кейс", models.StatusNone, user)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, &models.ServerErrorResponse{
 			Error: err.Error(),
@@ -150,7 +150,6 @@ func StartTestCasesGeneration(ctx *gin.Context) {
 		generated, err := ai.StartTestCaseListGeneration(len(*result.UUIDList), &payload.UserInput)
 		if err != nil {
 			database.SetTestCaseErrorStatus(result.UUIDList)
-			fmt.Printf("err = %+v", err)
 		} else {
 			database.UpdateTestCaseWithModelResponse(result.UUIDList, *generated, user)
 		}

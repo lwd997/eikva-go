@@ -35,9 +35,6 @@ func GetTestCaseGroups(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, &response)
 }
 
-type AddTestCaseGroupPayload struct {
-	Name string `json:"name" validate:"required,min=1,max=50"`
-}
 
 func AddTestCaseGroup(ctx *gin.Context) {
 	user, err := tools.GetUserFromRequestCtx(ctx)
@@ -45,16 +42,7 @@ func AddTestCaseGroup(ctx *gin.Context) {
 		return
 	}
 
-	var payload AddTestCaseGroupPayload
-	if !tools.HandleRequestBodyParsing(ctx, &payload) {
-		return
-	}
-
-	if !tools.HadleRequestBodyValidation(ctx, &payload) {
-		return
-	}
-
-	tcg, err := database.AddTestCaseGroup(payload.Name, user)
+	tcg, err := database.AddTestCaseGroup("Новая группа", user)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, &models.ServerErrorResponse{
 			Error: err.Error(),
@@ -221,7 +209,7 @@ func UploadFiles(ctx *gin.Context) {
 		f, fOpenErr := file.Open()
 		if fOpenErr != nil {
 			ctx.JSON(http.StatusInternalServerError, &models.ServerErrorResponse{
-				Error: err.Error(),
+				Error: fOpenErr.Error(),
 			})
 			return
 		}
@@ -257,7 +245,7 @@ func UploadFiles(ctx *gin.Context) {
 
 			c = tools.GetAllXmlText(reader)
 		} else {
-			c = string(contentBytes.Bytes())
+			c = contentBytes.String()
 		}
 
 		fileList = append(fileList, &models.File{

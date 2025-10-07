@@ -2,3 +2,5 @@ eikva.db*
 .env
 .env.local
 *.local.*
+eikva-client/node_modules/**
+static

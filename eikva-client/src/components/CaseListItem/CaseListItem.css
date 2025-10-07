@@ -1,0 +1,23 @@
+.case-list-item {
+  background-color: hsl(0, 0%, 95%);
+  padding: 0.5rem;
+}
+
+.case-list-item .form-control {
+  box-shadow: none !important;
+}
+
+.case-list-item.non-active .form-control:focus {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.case-list-item.active .form-control:focus {
+  border-color: hsl(0, 0%, 50%);
+}
+
+.case-list-item:hover,
+.case-list-item.active {
+  background-color: hsl(0, 0%, 85%);
+}
+
