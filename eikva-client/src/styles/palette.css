@@ -343,11 +343,14 @@ h2 {
     text-overflow: ellipsis;
 }
 
-.logo-image {
-    width: 3rem;
-    height: 3rem;
-    background-color: var(--button-bg-color);
-    border-radius: var(--card-border-radius);
+.logo {
+    width: 426px;
+    height: auto;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
 }
 
 .tutorial-wizard {

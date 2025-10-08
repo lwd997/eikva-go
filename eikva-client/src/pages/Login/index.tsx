@@ -34,7 +34,7 @@ export const Login = () => {
     let actionBtnTitle: string;
     let secondaryBtnTitle: string;
 
-    switch(formType) {
+    switch (formType) {
         case "register":
             actionBtnTitle = "Зарегистроваться";
             secondaryBtnTitle = "Вход";
@@ -49,29 +49,33 @@ export const Login = () => {
 
     return (
         <form onSubmit={handleSubmit} className="display-flex width-100 height-100 align-items-center justify-content-center">
-            <div className="login-form card display-flex flex-direction-column">
-                <div className="logo">
-                    <img src="/media/TestCraft.svg" />
+            <div className="login-form card ">
+                <div className="width-100 display-flex align-items-center justify-content-center">
+                    <div className="logo">
+                        <img src="/media/TestCraft.png" />
+                    </div>
                 </div>
-                <label htmlFor="login">Логин</label>
-                <input
-                    id="login"
-                    type="text"
-                    value={login}
-                    onChange={(e) => setLogin(e.target.value)}
-                />
+                <div className="display-flex flex-direction-column">
+                    <label htmlFor="login">Логин</label>
+                    <input
+                        id="login"
+                        type="text"
+                        value={login}
+                        onChange={(e) => setLogin(e.target.value)}
+                    />
 
-                <label htmlFor="password">Пароль</label>
-                <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                    <label htmlFor="password">Пароль</label>
+                    <input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
 
-                <div className="display-flex align-items-center justify-content-end">
-                    <Button type="button" className="text" onClick={toggleFormType}>{secondaryBtnTitle}</Button>
-                    <Button type="submit">{actionBtnTitle}</Button>
+                    <div className="display-flex align-items-center justify-content-end">
+                        <Button type="button" className="text" onClick={toggleFormType}>{secondaryBtnTitle}</Button>
+                        <Button type="submit">{actionBtnTitle}</Button>
+                    </div>
                 </div>
             </div>
         </form>
