@@ -15,6 +15,7 @@ require (
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pkoukk/tiktoken-go v0.1.8
+	github.com/pkoukk/tiktoken-go-loader v0.0.2
 	github.com/xuri/excelize/v2 v2.9.1
 	golang.org/x/net v0.40.0
 	modernc.org/sqlite v1.39.0
